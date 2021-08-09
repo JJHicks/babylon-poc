@@ -1,0 +1,24 @@
+{
+    "compilerOptions": {
+      "target": "es6",
+      "module": "commonjs",
+      "noResolve": false,
+      "noImplicitAny": true,
+      "preserveConstEnums":true,
+      "lib": [
+          "dom",
+          "es6"
+      ],
+      "rootDir": "src",
+      "sourceMap": true,
+      "outDir": "public/js",
+      "types": [
+        //"babylonjs",
+        // "babylonjs-gui",
+        // "babylonjs-materials"
+        ],
+        "skipLibCheck": true
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules/**/*", "**/*.spec.ts"]
+}

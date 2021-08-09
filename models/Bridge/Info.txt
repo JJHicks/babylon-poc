@@ -1,0 +1,1 @@
+If you having problems with displaying textures on scene, just change the downloaded root model folder's name to bridge.
