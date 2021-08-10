@@ -1,13 +1,17 @@
-main{
-    display: flex;
-    flex-wrap: nowrap;
+body{
     height: 100vh;
-    height: -webkit-fill-available;
-    max-height: 100vh;
-    overflow-x: auto;
-    overflow-y: hidden;
 }
 
-canvas{
-    
+header{
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    position: absolute;
+    background-color: transparent;
+    padding: .5rem;
+    color: #fff;
+
+    .form-group{
+        margin-left: 20px;
+    }
 }

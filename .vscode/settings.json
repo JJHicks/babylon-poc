@@ -7,7 +7,7 @@
         {
             "format": "expanded",
             "extensionName": ".css",
-            "savePath": "~/../public/style"
+            "savePath": "/public/css"
         }
     ]
 

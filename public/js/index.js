@@ -1,0 +1,2 @@
+flatpickr("#startDate", {});
+flatpickr("#endDate", {});

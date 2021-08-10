@@ -1,0 +1,24 @@
+body {
+  height: 100vh;
+}
+
+header {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: start;
+  position: absolute;
+  background-color: transparent;
+  padding: .5rem;
+  color: #fff;
+}
+
+header .form-group {
+  margin-left: 20px;
+}
+/*# sourceMappingURL=style.css.map */

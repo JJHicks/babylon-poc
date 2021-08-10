@@ -13,12 +13,17 @@
       "sourceMap": true,
       "outDir": "public/js",
       "types": [
-        //"babylonjs",
+        // "babylonjs",
         // "babylonjs-gui",
         // "babylonjs-materials"
         ],
-        "skipLibCheck": true
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "moduleResolution": "node"
     },
     "include": ["src/**/*"],
-    "exclude": ["node_modules/**/*", "**/*.spec.ts"]
+    "exclude": ["node_modules/**/*", "**/*.spec.ts"],
+    "rules": {
+        "no-unused-vars": "off"
+    }
 }
