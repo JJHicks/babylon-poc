@@ -22,20 +22,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
 require("@babylonjs/core/Debug/debugLayer");
 require("@babylonjs/inspector");
 require("@babylonjs/loaders/glTF");
-const core_1 = require("@babylonjs/core");
+const BABYLON = __importStar(require("babylonjs"));
 const environment_1 = require("./environment");
 const GUI = __importStar(require("babylonjs-gui"));
 class App {
     constructor() {
-        this._infoDisplayText = "";
         // Create the canvas html element and attach it to the webpage
         var container = document.getElementById("canvasContainer");
         this._canvas = document.createElement("canvas");
         this._canvas.id = "renderCanvas";
         container.appendChild(this._canvas);
         // Initialize babylon scene and engine
-        this._engine = new core_1.Engine(this._canvas, true);
-        this._scene = new core_1.Scene(this._engine);
+        this._engine = new BABYLON.Engine(this._canvas, true);
+        this._scene = new BABYLON.Scene(this._engine);
         this._initCamera();
         // Load environment
         this._environment = new environment_1.Environment(this._scene);
@@ -65,24 +64,19 @@ class App {
         });
         this._scene.onPointerDown = (evt, pickResult) => {
             var results = this._scene.multiPick(this._scene.unTranslatedPointer.x, this._scene.unTranslatedPointer.y);
-            //aaaaconsole.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
+            console.log(pickResult);
+            //console.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
             var firstSensor = results.find(info => info.pickedMesh.name.includes("sensor_"));
             if (firstSensor) {
                 console.log("SENSOR HIT: " + firstSensor.pickedMesh.name);
-                this._infoDisplayText = firstSensor.pickedMesh.name;
+                this._infoDisplayTextBlock.text = firstSensor.pickedMesh.name;
             }
         };
-        this._infoDisplayTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this._scene);
-        var textblock = new GUI.TextBlock();
-        textblock.text = this._infoDisplayText;
-        textblock.fontSize = 24;
-        textblock.top = -100;
-        textblock.color = "white";
-        this._infoDisplayTexture.addControl(textblock);
+        this._initInfoDisplay();
     }
     _initCamera() {
-        this._camera = new core_1.UniversalCamera("Camera", new core_1.Vector3(400, 700, 800), this._scene);
-        this._camera.setTarget(core_1.Vector3.Zero());
+        this._camera = new BABYLON.UniversalCamera("Camera", new BABYLON.Vector3(400, 700, 800), this._scene);
+        this._camera.setTarget(BABYLON.Vector3.Zero());
         this._camera.keysLeft = [65, 37]; // A, Left
         this._camera.keysRight = [68, 39]; // D, Right
         this._camera.keysUp = [87, 38]; // W, Up
@@ -91,6 +85,17 @@ class App {
         this._camera.keysUpward = [69]; // E
         this._camera.speed = 10;
         this._camera.attachControl(this._canvas);
+    }
+    _initInfoDisplay() {
+        this._infoDisplayTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this._scene);
+        this._infoDisplayTextBlock = new GUI.TextBlock();
+        this._infoDisplayTextBlock.fontSize = 24;
+        this._infoDisplayTextBlock.paddingTop = "20px";
+        this._infoDisplayTextBlock.paddingRight = "20px";
+        this._infoDisplayTextBlock.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
+        this._infoDisplayTextBlock.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
+        this._infoDisplayTextBlock.color = "white";
+        this._infoDisplayTexture.addControl(this._infoDisplayTextBlock);
     }
 }
 new App();
