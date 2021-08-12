@@ -19,7 +19,8 @@
   },
   "homepage": "https://github.com/JJHicks/babylon-poc#readme",
   "dependencies": {
-    "babylonjs": "^4.2.0"
+    "babylonjs": "^4.2.0",
+    "babylonjs-gui": "^4.2.0"
   },
   "devDependencies": {
     "@babylonjs/core": "^4.2.0",

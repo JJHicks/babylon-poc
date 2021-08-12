@@ -11,7 +11,13 @@ header{
     padding: .5rem;
     color: #fff;
 
-    .form-group{
+    .form-group, .form-check{
         margin-left: 20px;
     }
+}
+
+#renderCanvas{
+    height: 100% !important;
+    width: 100% !important;
+    touch-action: none;
 }

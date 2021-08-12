@@ -1,9 +1,8 @@
-import { ICameraInput, UniversalCamera, Tools } from "babylonjs";
+import { ICameraInput, UniversalCamera, FreeCamera, Tools } from "babylonjs";
 
-
-class UniversalCameraInput implements ICameraInput<UniversalCamera>{
+export class UniversalCameraInput implements ICameraInput<FreeCamera>{
     // the input manager will fill the parent camera
-    public camera: UniversalCamera;
+    public camera: FreeCamera;
     
     private _keys: number[];
     private _keysLeft: number[];
@@ -40,9 +39,8 @@ class UniversalCameraInput implements ICameraInput<UniversalCamera>{
 
             element.addEventListener("keydown", this._onKeyDown, false);
             element.addEventListener("keyup", this._onKeyUp, false);
-            //Tools.RegisterTopRootEvents(canvas, [{ name: "blur", handler: this._onLostFocus }]);
+            Tools.RegisterTopRootEvents(window, [{ name: "blur", handler: this._onLostFocus }]);
         }
-
     }
 
     //detach control must deactivate your input and release all pointers, closures or event listeners
@@ -52,7 +50,7 @@ class UniversalCameraInput implements ICameraInput<UniversalCamera>{
         if (this._onKeyDown) {
           element.removeEventListener("keydown", this._onKeyDown);
           element.removeEventListener("keyup", this._onKeyUp);
-          //Tools.UnregisterTopRootEvents(canvas, [{ name: "blur", handler: this._onLostFocus }]);
+          Tools.UnregisterTopRootEvents(window, [{ name: "blur", handler: this._onLostFocus }]);
           this._keys = [];
           this._onKeyDown = null;
           this._onKeyUp = null;
@@ -61,7 +59,24 @@ class UniversalCameraInput implements ICameraInput<UniversalCamera>{
 
     //this optional function will get called for each rendered frame, if you want to synchronize your input to rendering,
     //no need to use requestAnimationFrame. It's a good place for applying calculations if you have to
-    checkInputs?: () => void;
+    public checkInputs(): void{
+        if (this._onKeyDown) {
+            var camera = this.camera;
+            // Keyboard
+            for (var index = 0; index < this._keys.length; index++) {
+              var keyCode = this._keys[index];
+              if (this._keysLeft.indexOf(keyCode) !== -1) {
+                camera.cameraRotation.y += this._sensibility;
+              } else if (this._keysRight.indexOf(keyCode) !== -1) {
+                camera.cameraRotation.y -= this._sensibility;
+              }
+            }
+          }
+    }
+
+    private _onLostFocus(){
+        this._keys = [];
+    }
 
     private _onKeyDown(evt : KeyboardEvent){
         if (this._keysLeft.indexOf(evt.keyCode) !== -1 || this._keysRight.indexOf(evt.keyCode) !== -1) {

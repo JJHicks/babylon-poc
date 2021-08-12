@@ -18,7 +18,14 @@ header {
   color: #fff;
 }
 
-header .form-group {
+header .form-group, header .form-check {
   margin-left: 20px;
+}
+
+#renderCanvas {
+  height: 100% !important;
+  width: 100% !important;
+  -ms-touch-action: none;
+      touch-action: none;
 }
 /*# sourceMappingURL=style.css.map */

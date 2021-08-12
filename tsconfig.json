@@ -13,13 +13,14 @@
       "sourceMap": true,
       "outDir": "public/js",
       "types": [
-        // "babylonjs",
-        // "babylonjs-gui",
+        "babylonjs",
+        "babylonjs-gui",
         // "babylonjs-materials"
         ],
         "skipLibCheck": true,
         "esModuleInterop": true,
-        "moduleResolution": "node"
+        "moduleResolution": "node",
+        "resolveJsonModule": true
     },
     "include": ["src/**/*"],
     "exclude": ["node_modules/**/*", "**/*.spec.ts"],

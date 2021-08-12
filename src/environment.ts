@@ -1,25 +1,29 @@
 import "@babylonjs/core/Debug/debugLayer";
 import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
-import { Engine, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, SceneLoader, Color4 } from "@babylonjs/core";
+import { AbstractMesh, Scene, ArcRotateCamera, Vector3, HemisphericLight, Mesh, MeshBuilder, SceneLoader, Color3, StandardMaterial } from "@babylonjs/core";
+import sensors from "./data/sensors.json";
 
 export class Environment{
 
     private _scene: Scene;
+    private _bridgeMeshes: AbstractMesh[];
+    public sensors: Mesh[];
 
     constructor(scene: Scene) {
+        this.sensors = [];
         this._scene = scene;       
     }
 
     public async load() {
        
-        const assets = await this._loadAsset();
+        await this._loadAssets();
 
         //Loop through all environment meshes that were imported
-        assets.allMeshes.forEach(m => {
+        this._bridgeMeshes.forEach(m => {
             m.receiveShadows = true;
             m.checkCollisions = true;
-
+            m.renderingGroupId = 2;
             // if (m.name == "ground") { //dont check for collisions, dont allow for raycasting to detect it(cant land on it)
             //     m.checkCollisions = false;
             //     m.isPickable = false;
@@ -29,21 +33,39 @@ export class Environment{
        //this._scene.clearColor = new Color4(.617, .105, .195);
     }
 
-    //Load all necessary meshes for the environment
-    public async _loadAsset() {
-
-        // Get our model
-        // const bridge = await SceneLoader.ImportMeshAsync(null, "../models/", "bridge.gltf", this._scene);
-        const bridge = await SceneLoader.ImportMeshAsync(null, "../models/bridge/", "scene.gltf", this._scene);
-    
-        let bridgeMesh = bridge.meshes[0];
-        bridgeMesh.scaling.copyFromFloats(0.1, 0.1, 0.1);
-        let allMeshes = bridgeMesh.getChildMeshes();   
-
-        return {
-            env: bridgeMesh,
-            allMeshes: allMeshes,
-        }
+    public setAllSensorsVisible(visible: boolean){
+        const group = visible ? 1 : 2;
+        this._bridgeMeshes.forEach(m => {
+            m.renderingGroupId = group;
+        });
     }
 
+    //Load all necessary meshes for the environment
+    public async _loadAssets() {
+        const bridge = await SceneLoader.ImportMeshAsync(null, "../models/bridge/", "scene.gltf", this._scene);
+        var bridgeMaterial = new StandardMaterial("bridge", this._scene);
+        bridgeMaterial.diffuseColor = new Color3(1, 0, 0);
+
+        this._bridgeMeshes = bridge.meshes;
+
+        var bridgeMesh = bridge.meshes[0] as Mesh;
+        bridgeMesh.renderingGroupId = 1;
+        bridgeMesh.scaling.copyFromFloats(0.1, 0.1, 0.1);
+        bridgeMesh.material = bridgeMaterial;
+
+        var light1: HemisphericLight = new HemisphericLight("light1", new Vector3(1, 1, 0), this._scene);
+
+        var sensorMaterial = new StandardMaterial("sensorMaterial", this._scene);
+        sensorMaterial.diffuseColor = new Color3(0, 0, 1);
+
+        sensors.forEach(sensor => {
+            var sensorMesh: Mesh = MeshBuilder.CreateSphere(sensor.name, { diameter: 5 }, this._scene);
+
+            sensorMesh.position = new Vector3(sensor.position.x, sensor.position.y, sensor.position.z);
+            sensorMesh.material = sensorMaterial;
+            sensorMesh.renderingGroupId = 2;
+            //sensorMesh.showBoundingBox = true;
+            this.sensors.push(sensorMesh);
+        });
+    }
 }

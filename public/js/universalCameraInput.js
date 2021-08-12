@@ -1,5 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.UniversalCameraInput = void 0;
+const babylonjs_1 = require("babylonjs");
 class UniversalCameraInput {
     constructor() {
         this._keysLeft = [65, 37];
@@ -24,7 +26,7 @@ class UniversalCameraInput {
             element.tabIndex = 1;
             element.addEventListener("keydown", this._onKeyDown, false);
             element.addEventListener("keyup", this._onKeyUp, false);
-            //Tools.RegisterTopRootEvents(canvas, [{ name: "blur", handler: this._onLostFocus }]);
+            babylonjs_1.Tools.RegisterTopRootEvents(window, [{ name: "blur", handler: this._onLostFocus }]);
         }
     }
     //detach control must deactivate your input and release all pointers, closures or event listeners
@@ -34,11 +36,31 @@ class UniversalCameraInput {
         if (this._onKeyDown) {
             element.removeEventListener("keydown", this._onKeyDown);
             element.removeEventListener("keyup", this._onKeyUp);
-            //Tools.UnregisterTopRootEvents(canvas, [{ name: "blur", handler: this._onLostFocus }]);
+            babylonjs_1.Tools.UnregisterTopRootEvents(window, [{ name: "blur", handler: this._onLostFocus }]);
             this._keys = [];
             this._onKeyDown = null;
             this._onKeyUp = null;
         }
+    }
+    //this optional function will get called for each rendered frame, if you want to synchronize your input to rendering,
+    //no need to use requestAnimationFrame. It's a good place for applying calculations if you have to
+    checkInputs() {
+        if (this._onKeyDown) {
+            var camera = this.camera;
+            // Keyboard
+            for (var index = 0; index < this._keys.length; index++) {
+                var keyCode = this._keys[index];
+                if (this._keysLeft.indexOf(keyCode) !== -1) {
+                    camera.cameraRotation.y += this._sensibility;
+                }
+                else if (this._keysRight.indexOf(keyCode) !== -1) {
+                    camera.cameraRotation.y -= this._sensibility;
+                }
+            }
+        }
+    }
+    _onLostFocus() {
+        this._keys = [];
     }
     _onKeyDown(evt) {
         if (this._keysLeft.indexOf(evt.keyCode) !== -1 || this._keysRight.indexOf(evt.keyCode) !== -1) {
@@ -63,4 +85,5 @@ class UniversalCameraInput {
         }
     }
 }
+exports.UniversalCameraInput = UniversalCameraInput;
 //# sourceMappingURL=universalCameraInput.js.map
