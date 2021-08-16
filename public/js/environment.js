@@ -50,8 +50,8 @@ class Environment {
         });
     }
     setAllSensorsVisible(visible) {
-        const group = visible ? 1 : 2;
-        this._bridgeMeshes.forEach(m => {
+        const group = visible ? 3 : 2;
+        this.sensors.forEach(m => {
             m.renderingGroupId = group;
         });
     }
@@ -60,34 +60,50 @@ class Environment {
         return __awaiter(this, void 0, void 0, function* () {
             var waterMaterial = new BABYLON.StandardMaterial("water", this._scene);
             waterMaterial.diffuseColor = new BABYLON.Color3(0, .41015, .57813);
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 5000, height: 2000 }, this._scene);
-            ground.material = waterMaterial;
+            // var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 5000, height: 2000}, this._scene);
+            // ground.material = waterMaterial;
+            BABYLON.SceneLoader.ImportMesh(null, "../models/scene/google/", "WoolseyFinnelBridgeTerrain.gltf", this._scene, (meshes, particleSytems, skeletons) => {
+                var sceneMaterial = new BABYLON.StandardMaterial("scene", this._scene);
+                sceneMaterial.diffuseColor = new BABYLON.Color3(1, 1, 0);
+                console.log(meshes);
+                var sceneMesh = meshes[0];
+                sceneMesh.scaling.copyFromFloats(12, 12, 12);
+                sceneMesh.rotation = new BABYLON.Vector3(0, 1.44, 0);
+                sceneMesh.position = new BABYLON.Vector3(800, 235, 200);
+                // meshes.forEach(mesh => {
+                //     //mesh.material = sceneMaterial;
+                //     mesh.renderingGroupId = 3;
+                // });
+                meshes[1].renderingGroupId = 2;
+                meshes[2].renderingGroupId = 3;
+                sceneMesh.material = sceneMaterial;
+            }, e => console.log("Loading Scene..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
             BABYLON.SceneLoader.ImportMesh(null, "../models/bridge/", "scene.gltf", this._scene, (meshes, particleSytems, skeletons) => {
                 var bridgeMaterial = new BABYLON.StandardMaterial("bridge", this._scene);
-                bridgeMaterial.diffuseColor = new BABYLON.Color3(0.9, 0, 0.9);
+                bridgeMaterial.diffuseColor = new BABYLON.Color3(0.9, 0.9, 0.9);
                 // Area texture application
                 var sensor1 = this.sensors.find(s => s.name === "sensor_1");
                 console.log(sensor1);
                 var centerX = sensor1.position.x;
                 var centerY = sensor1.position.y;
                 var radius = 100;
-                var dynamicTexture = new BABYLON.DynamicTexture("texture", 512, this._scene, true);
-                var context = dynamicTexture.getContext();
-                context.beginPath();
-                // context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-                context.arc(-24, 90, 100, 0, 2 * Math.PI, false);
-                context.fillStyle = '#00FF00';
-                context.fill();
-                context.stroke();
-                dynamicTexture.update();
-                bridgeMaterial.emissiveTexture = dynamicTexture;
+                // var dynamicTexture = new BABYLON.DynamicTexture("texture", 512, this._scene, true);
+                // var context = dynamicTexture.getContext();
+                // context.beginPath();
+                // // context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+                // context.arc(-24, 90, 100, 0, 2 * Math.PI, false);
+                // context.fillStyle = '#00FF00';
+                // context.fill();
+                // context.stroke();
+                // dynamicTexture.update();
+                // bridgeMaterial.emissiveTexture = dynamicTexture;
                 //var i = 0;
                 meshes.forEach(m => {
                     m.receiveShadows = true;
                     m.checkCollisions = true;
                     m.renderingGroupId = 2;
                     if (m.id === "SketchUp.019__0")
-                        //if(++i < 200)
+                        // //if(++i < 200)
                         m.material = bridgeMaterial;
                 });
                 this._bridgeMeshes = meshes;
@@ -100,7 +116,23 @@ class Environment {
                 // merged.checkCollisions = true;
                 // merged.renderingGroupId = 2;
                 // merged.material = bridgeMaterial;
-            }, e => console.log("Loading..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
+                var sensor1 = this.sensors.find(s => s.name === "sensor_1");
+                // var hlight = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, 0), this._scene);
+                // hlight.diffuse = new BABYLON.Color3(1, 0, 0);
+                // hlight.specular = new BABYLON.Color3(0, 1, 0);
+                // hlight.groundColor = new BABYLON.Color3(0, 1, 0);
+                var plight = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(sensor1.position.x, sensor1.position.y, sensor1.position.z + 10), this._scene);
+                plight.range = 100;
+                plight.diffuse = new BABYLON.Color3(1, 0, 0);
+                plight.specular = new BABYLON.Color3(1, 0, 0);
+                plight.intensity = 5;
+                // var plight2 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(sensor1.position.x, sensor1.position.y, sensor1.position.z + 10), this._scene);
+                // plight2.range = 200;
+                // plight2.diffuse = new BABYLON.Color3(0.5, 0.5, 0);
+                // plight2.specular = new BABYLON.Color3(0.5, 0.5, 0);
+                // plight2.intensity = 2;
+                //plight.groundColor = new BABYLON.Color3(0, 1, 0);
+            }, e => console.log("Loading Bridge..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
             var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), this._scene);
             var sensorMaterial = new BABYLON.StandardMaterial("sensorMaterial", this._scene);
             sensorMaterial.diffuseColor = new BABYLON.Color3(0, 1, 0);
