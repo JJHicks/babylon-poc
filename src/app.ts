@@ -8,7 +8,8 @@ import * as GUI from "babylonjs-gui";
 class App {
 
     private _scene: BABYLON.Scene;
-    private _camera: BABYLON.UniversalCamera;
+    private _universalCamera: BABYLON.UniversalCamera;
+    //private _fpCamera: BABYLON.
     private _canvas: HTMLCanvasElement;
     private _engine: BABYLON.Engine;
     private _environment: Environment;
@@ -62,7 +63,7 @@ class App {
 
         this._scene.onPointerDown = (evt, pickResult) => {
             var results = this._scene.multiPick(this._scene.unTranslatedPointer.x, this._scene.unTranslatedPointer.y);
-            console.log(pickResult);
+            //console.log(pickResult);
             //console.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
 
             var firstSensor = results.find(info => info.pickedMesh.name.includes("sensor_"));
@@ -78,16 +79,16 @@ class App {
     }
 
     private _initCamera(){
-        this._camera = new BABYLON.UniversalCamera("Camera", new BABYLON.Vector3(400, 700, 800), this._scene);
-        this._camera.setTarget(BABYLON.Vector3.Zero());
-        this._camera.keysLeft = [65, 37]; // A, Left
-        this._camera.keysRight = [68, 39]; // D, Right
-        this._camera.keysUp = [87, 38]; // W, Up
-        this._camera.keysDown = [83 ,40]; // S, Down
-        this._camera.keysDownward = [81]; // Q
-        this._camera.keysUpward = [69]; // E
-        this._camera.speed = 10;
-        this._camera.attachControl(this._canvas)
+        this._universalCamera = new BABYLON.UniversalCamera("Camera", new BABYLON.Vector3(400, 700, 800), this._scene);
+        this._universalCamera.setTarget(BABYLON.Vector3.Zero());
+        this._universalCamera.keysLeft = [65, 37]; // A, Left
+        this._universalCamera.keysRight = [68, 39]; // D, Right
+        this._universalCamera.keysUp = [87, 38]; // W, Up
+        this._universalCamera.keysDown = [83 ,40]; // S, Down
+        this._universalCamera.keysDownward = [81]; // Q
+        this._universalCamera.keysUpward = [69]; // E
+        this._universalCamera.speed = 10;
+        this._universalCamera.attachControl(this._canvas)
     }
 
     private _initInfoDisplay(){

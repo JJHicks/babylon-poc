@@ -25,45 +25,53 @@ export class Environment{
 
     public setAllSensorsVisible(visible: boolean){
         const group = visible ? 3 : 2;
-        this.sensors.forEach(m => {
-            m.renderingGroupId = group;
+        this.sensors.forEach(s => {
+            s.renderingGroupId = group;
         });
     }
 
-    //Load all necessary meshes for the environment
     public async _loadAssets() {
 
         var waterMaterial = new BABYLON.StandardMaterial("water", this._scene);
         waterMaterial.diffuseColor = new BABYLON.Color3(0, .41015, .57813);
 
-        // var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 5000, height: 2000}, this._scene);
-        // ground.material = waterMaterial;
+        var ground = BABYLON.MeshBuilder.CreateGround("ground", {width: 5000, height: 2000}, this._scene);
+        ground.material = waterMaterial;
+
+        // THE SKY
+
+        const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", {size: 1000}, this._scene);
+        const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this._scene);
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("img/sky3/skybox", this._scene);
+        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+        skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+        skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+        //skybox.position = new BABYLON.Vector3(300, 700, 1000);
+        skybox.position = this._scene.activeCamera.position;
+        skybox.material = skyboxMaterial;
+
+        // THE TERRAIN
 
         BABYLON.SceneLoader.ImportMesh(null, "../models/scene/google/", "WoolseyFinnelBridgeTerrain.gltf", this._scene,
         (meshes, particleSytems, skeletons) => {
 
-
             var sceneMaterial = new BABYLON.StandardMaterial("scene", this._scene);
             sceneMaterial.diffuseColor = new BABYLON.Color3(1, 1, 0);
 
-            console.log(meshes);
             var sceneMesh = meshes[0] as BABYLON.Mesh;
             sceneMesh.scaling.copyFromFloats(12, 12, 12);
             sceneMesh.rotation = new BABYLON.Vector3(0, 1.44, 0);
             sceneMesh.position = new BABYLON.Vector3(800, 235, 200);
 
-            // meshes.forEach(mesh => {
-            //     //mesh.material = sceneMaterial;
-            //     mesh.renderingGroupId = 3;
-            // });
-
-            meshes[1].renderingGroupId = 2;
-            meshes[2].renderingGroupId = 3;
+            meshes.forEach(mesh => {
+                mesh.renderingGroupId = 2;
+            });
 
             sceneMesh.material = sceneMaterial;
-
-
         }, e => console.log("Loading Scene..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
+
+        // THE BRIDGE
 
         BABYLON.SceneLoader.ImportMesh(null, "../models/bridge/", "scene.gltf", this._scene,
             (meshes, particleSytems, skeletons) => {
@@ -138,6 +146,8 @@ export class Environment{
             }, e => console.log("Loading Bridge..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
     
         var light1: BABYLON.HemisphericLight = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), this._scene);
+
+        // SENSORS
 
         var sensorMaterial = new BABYLON.StandardMaterial("sensorMaterial", this._scene);
         sensorMaterial.diffuseColor = new BABYLON.Color3(0, 1, 0);
