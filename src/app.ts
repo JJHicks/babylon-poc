@@ -4,6 +4,7 @@ import "@babylonjs/loaders/glTF";
 import * as BABYLON from "babylonjs";
 import { Environment } from "./environment";
 import * as GUI from "babylonjs-gui";
+import { api } from "./api/api";
 
 class App {
 
@@ -35,9 +36,9 @@ class App {
         this._environment = new Environment(this._scene);
         this._environment.load();
 
-        // hide/show the Inspector, Ctrl + i
+        // hide/show the Inspector, i
         window.addEventListener("keydown", (ev) => {
-            if (ev.ctrlKey && ev.keyCode === 73) {
+            if (ev.keyCode === 73) {
                 if (this._scene.debugLayer.isVisible()) {
                     this._scene.debugLayer.hide();
                 } else {
@@ -53,7 +54,12 @@ class App {
 
         document.getElementById("sensorsInFront").addEventListener("change", e => {
             this._environment.setAllSensorsVisible((e.target as HTMLInputElement).checked)
-        })
+        });
+
+        document.getElementById("heatmap").addEventListener("change", e => {
+            if((e.target as HTMLInputElement).checked)
+                api.getSensorData().then(res => console.log(res));
+        });
 
         window.addEventListener("resize", () => {
             this._canvas.width = window.innerWidth;
@@ -64,7 +70,7 @@ class App {
         this._scene.onPointerDown = (evt, pickResult) => {
             var results = this._scene.multiPick(this._scene.unTranslatedPointer.x, this._scene.unTranslatedPointer.y);
             //console.log(pickResult);
-            //console.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
+            console.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
 
             var firstSensor = results.find(info => info.pickedMesh.name.includes("sensor_"));
 

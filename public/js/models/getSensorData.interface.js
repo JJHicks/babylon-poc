@@ -1,0 +1,1 @@
+//# sourceMappingURL=getSensorData.interface.js.map

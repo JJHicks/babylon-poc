@@ -1,0 +1,15 @@
+#
+## Alias OBJ Material File
+# Exported from SketchUp, (c) 2000-2012 Trimble Navigation Limited
+
+newmtl OobTerrain
+Ka 0.000000 0.000000 0.000000
+Kd 0.537255 0.525490 0.509804
+Ks 0.330000 0.330000 0.330000
+map_Kd BridgeTerrainBuildings/OobTerrain.png
+
+newmtl FrontColor
+Ka 0.000000 0.000000 0.000000
+Kd 0.729412 0.705882 0.674510
+Ks 0.330000 0.330000 0.330000
+

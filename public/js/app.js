@@ -25,6 +25,7 @@ require("@babylonjs/loaders/glTF");
 const BABYLON = __importStar(require("babylonjs"));
 const environment_1 = require("./environment");
 const GUI = __importStar(require("babylonjs-gui"));
+const api_1 = require("./api/api");
 class App {
     constructor() {
         // Create the canvas html element and attach it to the webpage
@@ -39,9 +40,9 @@ class App {
         // Load environment
         this._environment = new environment_1.Environment(this._scene);
         this._environment.load();
-        // hide/show the Inspector, Ctrl + i
+        // hide/show the Inspector, i
         window.addEventListener("keydown", (ev) => {
-            if (ev.ctrlKey && ev.keyCode === 73) {
+            if (ev.keyCode === 73) {
                 if (this._scene.debugLayer.isVisible()) {
                     this._scene.debugLayer.hide();
                 }
@@ -57,6 +58,10 @@ class App {
         document.getElementById("sensorsInFront").addEventListener("change", e => {
             this._environment.setAllSensorsVisible(e.target.checked);
         });
+        document.getElementById("heatmap").addEventListener("change", e => {
+            if (e.target.checked)
+                api_1.api.getSensorData().then(res => console.log(res));
+        });
         window.addEventListener("resize", () => {
             this._canvas.width = window.innerWidth;
             this._canvas.height = window.innerHeight;
@@ -65,7 +70,7 @@ class App {
         this._scene.onPointerDown = (evt, pickResult) => {
             var results = this._scene.multiPick(this._scene.unTranslatedPointer.x, this._scene.unTranslatedPointer.y);
             //console.log(pickResult);
-            //console.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
+            console.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
             var firstSensor = results.find(info => info.pickedMesh.name.includes("sensor_"));
             if (firstSensor) {
                 console.log("SENSOR HIT: " + firstSensor.pickedMesh.name);

@@ -37,26 +37,29 @@ require("@babylonjs/inspector");
 require("@babylonjs/loaders/glTF");
 const BABYLON = __importStar(require("babylonjs"));
 require("babylonjs-loaders");
+const earcut = __importStar(require("earcut"));
+window.earcut = earcut;
 const sensors_json_1 = __importDefault(require("./data/sensors.json"));
+const api_1 = require("./api/api");
 class Environment {
     constructor(scene) {
-        this.sensors = [];
+        this.sensorsMeshes = [];
         this._scene = scene;
     }
     load() {
         return __awaiter(this, void 0, void 0, function* () {
             yield this._loadAssets();
-            //this._scene.clearColor = new Color4(.617, .105, .195);
         });
     }
     setAllSensorsVisible(visible) {
         const group = visible ? 3 : 2;
-        this.sensors.forEach(s => {
+        this.sensorsMeshes.forEach(s => {
             s.renderingGroupId = group;
         });
     }
     _loadAssets() {
         return __awaiter(this, void 0, void 0, function* () {
+            console.log(earcut);
             var waterMaterial = new BABYLON.StandardMaterial("water", this._scene);
             waterMaterial.diffuseColor = new BABYLON.Color3(0, .41015, .57813);
             var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 5000, height: 2000 }, this._scene);
@@ -73,73 +76,66 @@ class Environment {
             skybox.position = this._scene.activeCamera.position;
             skybox.material = skyboxMaterial;
             // THE TERRAIN
-            BABYLON.SceneLoader.ImportMesh(null, "../models/scene/google/", "WoolseyFinnelBridgeTerrain.gltf", this._scene, (meshes, particleSytems, skeletons) => {
+            BABYLON.SceneLoader.ImportMesh(null, "../models/scene/terrain/", "BridgeTerrainBuildings.gltf", this._scene, (meshes, particleSytems, skeletons) => {
                 var sceneMaterial = new BABYLON.StandardMaterial("scene", this._scene);
                 sceneMaterial.diffuseColor = new BABYLON.Color3(1, 1, 0);
                 var sceneMesh = meshes[0];
                 sceneMesh.scaling.copyFromFloats(12, 12, 12);
-                sceneMesh.rotation = new BABYLON.Vector3(0, 1.44, 0);
-                sceneMesh.position = new BABYLON.Vector3(800, 235, 200);
                 meshes.forEach(mesh => {
                     mesh.renderingGroupId = 2;
                 });
                 sceneMesh.material = sceneMaterial;
             }, e => console.log("Loading Scene..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
             // THE BRIDGE
-            BABYLON.SceneLoader.ImportMesh(null, "../models/bridge/", "scene.gltf", this._scene, (meshes, particleSytems, skeletons) => {
-                var bridgeMaterial = new BABYLON.StandardMaterial("bridge", this._scene);
-                bridgeMaterial.diffuseColor = new BABYLON.Color3(0.9, 0.9, 0.9);
-                // Area texture application
-                var sensor1 = this.sensors.find(s => s.name === "sensor_1");
-                console.log(sensor1);
-                var centerX = sensor1.position.x;
-                var centerY = sensor1.position.y;
-                var radius = 100;
-                // var dynamicTexture = new BABYLON.DynamicTexture("texture", 512, this._scene, true);
-                // var context = dynamicTexture.getContext();
-                // context.beginPath();
-                // // context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
-                // context.arc(-24, 90, 100, 0, 2 * Math.PI, false);
-                // context.fillStyle = '#00FF00';
-                // context.fill();
-                // context.stroke();
-                // dynamicTexture.update();
-                // bridgeMaterial.emissiveTexture = dynamicTexture;
-                //var i = 0;
+            BABYLON.SceneLoader.ImportMesh(null, "../models/McFarlandBridge/", "McFarland Bridge.gltf", this._scene, (meshes, particleSytems, skeletons) => {
+                var bridgeMaterial = new BABYLON.StandardMaterial("bridgeSurface", this._scene);
+                bridgeMaterial.diffuseColor = new BABYLON.Color3(.617, .105, .195);
                 meshes.forEach(m => {
                     m.receiveShadows = true;
                     m.checkCollisions = true;
                     m.renderingGroupId = 2;
-                    if (m.id === "SketchUp.019__0")
-                        // //if(++i < 200)
-                        m.material = bridgeMaterial;
                 });
+                meshes[1].material = bridgeMaterial;
                 this._bridgeMeshes = meshes;
                 var bridgeMesh = meshes[0];
-                bridgeMesh.scaling.copyFromFloats(0.1, 0.1, 0.1);
-                //bridgeMesh.material = bridgeMaterial;
-                // Try merging all meshes then apply material?
-                // var merged = BABYLON.Mesh.MergeMeshes(meshes as BABYLON.Mesh[], false, true, undefined, false, true);
-                // merged.receiveShadows = true;
-                // merged.checkCollisions = true;
-                // merged.renderingGroupId = 2;
-                // merged.material = bridgeMaterial;
-                var sensor1 = this.sensors.find(s => s.name === "sensor_1");
-                // var hlight = new BABYLON.HemisphericLight("hemiLight", new BABYLON.Vector3(-1, 1, 0), this._scene);
-                // hlight.diffuse = new BABYLON.Color3(1, 0, 0);
-                // hlight.specular = new BABYLON.Color3(0, 1, 0);
-                // hlight.groundColor = new BABYLON.Color3(0, 1, 0);
-                var plight = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(sensor1.position.x, sensor1.position.y, sensor1.position.z + 10), this._scene);
-                plight.range = 100;
-                plight.diffuse = new BABYLON.Color3(1, 0, 0);
-                plight.specular = new BABYLON.Color3(1, 0, 0);
-                plight.intensity = 5;
-                // var plight2 = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(sensor1.position.x, sensor1.position.y, sensor1.position.z + 10), this._scene);
-                // plight2.range = 200;
-                // plight2.diffuse = new BABYLON.Color3(0.5, 0.5, 0);
-                // plight2.specular = new BABYLON.Color3(0.5, 0.5, 0);
-                // plight2.intensity = 2;
-                //plight.groundColor = new BABYLON.Color3(0, 1, 0);
+                bridgeMesh.scaling.copyFromFloats(0.3, 0.3, 0.3);
+                bridgeMesh.rotation = new BABYLON.Vector3(0, 1.462586, 0);
+                bridgeMesh.position = new BABYLON.Vector3(-80, -50, 105);
+                var sensor1 = this.sensorsMeshes.find(s => s.name === "sensor_1");
+                // var plight = new BABYLON.PointLight("pointLight", new BABYLON.Vector3(sensor1.position.x, sensor1.position.y, sensor1.position.z + 10), this._scene);
+                // plight.range = 100;
+                // plight.diffuse = new BABYLON.Color3(1, 0, 0);
+                // plight.specular = new BABYLON.Color3(1, 0, 0);
+                // plight.intensity = 5;
+                // Create heatmap surface
+                var values = [];
+                for (var i = 0; i < 100; i++) {
+                    values.push(Math.random() * 200);
+                }
+                var textureData = [];
+                values.forEach(value => {
+                    textureData.push(0, 0, value);
+                });
+                var texture = new BABYLON.RawTexture(
+                //new Uint32Array(textureData),
+                new Uint8Array(textureData), 10, 10, BABYLON.Engine.TEXTUREFORMAT_RGB, this._scene, false, false, BABYLON.Texture.TRILINEAR_SAMPLINGMODE);
+                var heatmapPlane = BABYLON.MeshBuilder.CreatePlane("heatmapPlane", { width: 800, height: 450 }, this._scene);
+                var heatmapMaterial = new BABYLON.StandardMaterial("heatmapMaterial", this._scene);
+                heatmapMaterial.diffuseTexture = texture;
+                heatmapPlane.material = heatmapMaterial;
+                heatmapPlane.rotation = new BABYLON.Vector3(1.5708, 0.2530727, 0);
+                heatmapPlane.position = new BABYLON.Vector3(bridgeMesh.position.x, bridgeMesh.position.y - 73, bridgeMesh.position.z);
+                heatmapPlane.renderingGroupId = 2;
+                const polyCorners = [
+                    new BABYLON.Vector2(50, 0),
+                    new BABYLON.Vector2(150, 0),
+                    new BABYLON.Vector2(100, 50),
+                    new BABYLON.Vector2(0, 50)
+                ];
+                const poly = new BABYLON.PolygonMeshBuilder("poly", polyCorners);
+                const polyMesh = poly.build();
+                polyMesh.position = new BABYLON.Vector3(-80, -50, 105);
+                //heatmapPlane.position = new BABYLON.Vector3(0, 0, 0);
             }, e => console.log("Loading Bridge..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
             var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), this._scene);
             // SENSORS
@@ -151,8 +147,36 @@ class Environment {
                 sensorMesh.material = sensorMaterial;
                 sensorMesh.renderingGroupId = 2;
                 //sensorMesh.showBoundingBox = true;
-                this.sensors.push(sensorMesh);
+                this.sensorsMeshes.push(sensorMesh);
             });
+            this.applyHeatmap(true);
+        });
+    }
+    applyHeatmap(show = true) {
+        api_1.api.getSensorData().then(res => {
+            res.sensors.forEach(sd => {
+                const sensor = sensors_json_1.default.find(s => s.id === sd.id);
+                if (sensor)
+                    sensor.reading = sd.reading;
+            });
+            //console.log(sensors);
+            // Area texture application
+            var sensor1 = this.sensorsMeshes.find(s => s.name === "sensor_1");
+            //console.log(sensor1);
+            var centerX = sensor1.position.x;
+            var centerY = sensor1.position.y;
+            var radius = 100;
+            // var dynamicTexture = new BABYLON.DynamicTexture("texture", 512, this._scene, true);
+            // var context = dynamicTexture.getContext();
+            // context.beginPath();
+            // // context.arc(centerX, centerY, radius, 0, 2 * Math.PI, false);
+            // context.arc(-24, 90, 100, 0, 2 * Math.PI, false);
+            // context.fillStyle = '#00FF00';
+            // context.fill();
+            // context.stroke();
+            // dynamicTexture.update();
+            // const road = this._bridgeMeshes.find(m => m.id === "SketchUp.019__0");
+            // bridgeMaterial.emissiveTexture = dynamicTexture;
         });
     }
 }

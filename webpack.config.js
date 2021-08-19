@@ -2,6 +2,8 @@ const path = require("path");
 const fs = require("fs");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
+const { webpack } = require("webpack");
+const WebpackDevServer = require("webpack-dev-server");
 const appDirectory = fs.realpathSync(process.cwd());
 
 module.exports = {
@@ -41,7 +43,7 @@ module.exports = {
         }),
         new CleanWebpackPlugin({
             cleanOnceBeforeBuildPatterns: ['public/js/build/*','public/css/build/*']
-        }),
+        })
     ],
     mode: "development",
 };
