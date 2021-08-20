@@ -41,6 +41,7 @@ const earcut = __importStar(require("earcut"));
 window.earcut = earcut;
 const sensors_json_1 = __importDefault(require("./data/sensors.json"));
 const api_1 = require("./api/api");
+const ValuesToHeatmap_1 = __importDefault(require("./helpers/ValuesToHeatmap"));
 class Environment {
     constructor(scene) {
         this.sensorsMeshes = [];
@@ -59,22 +60,25 @@ class Environment {
     }
     _loadAssets() {
         return __awaiter(this, void 0, void 0, function* () {
+            // Sample heatmap usage
+            // const minval = 1;
+            // const maxval = 3;
+            // const steps = 10;
+            // const delta = (maxval - minval) / steps;
+            // console.log('  Val       R    G    B');
+            // for(let i = 0; i < steps; i++){
+            //     const val = minval + (i * delta);
+            //     try{
+            //         let r,g,b;
+            //         [r,g,b] = convertValuesToHeatmap(minval, maxval, val);
+            //         console.log(`${val.toFixed(2)} -> (${r.toFixed(2)}, ${g.toFixed(2)}, ${b.toFixed(2)})`);
+            //     } catch (e) {
+            //         console.error(e);
+            //     }
+            // }
             console.log(earcut);
-            var waterMaterial = new BABYLON.StandardMaterial("water", this._scene);
-            waterMaterial.diffuseColor = new BABYLON.Color3(0, .41015, .57813);
-            var ground = BABYLON.MeshBuilder.CreateGround("ground", { width: 5000, height: 2000 }, this._scene);
-            ground.material = waterMaterial;
             // THE SKY
-            const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000 }, this._scene);
-            const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this._scene);
-            skyboxMaterial.backFaceCulling = false;
-            skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("img/sky3/skybox", this._scene);
-            skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
-            skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
-            skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-            //skybox.position = new BABYLON.Vector3(300, 700, 1000);
-            skybox.position = this._scene.activeCamera.position;
-            skybox.material = skyboxMaterial;
+            this._createSkyBox();
             // THE TERRAIN
             BABYLON.SceneLoader.ImportMesh(null, "../models/scene/terrain/", "BridgeTerrainBuildings.gltf", this._scene, (meshes, particleSytems, skeletons) => {
                 var sceneMaterial = new BABYLON.StandardMaterial("scene", this._scene);
@@ -108,33 +112,45 @@ class Environment {
                 // plight.specular = new BABYLON.Color3(1, 0, 0);
                 // plight.intensity = 5;
                 // Create heatmap surface
-                var values = [];
-                for (var i = 0; i < 100; i++) {
-                    values.push(Math.random() * 200);
-                }
                 var textureData = [];
-                values.forEach(value => {
-                    textureData.push(0, 0, value);
-                });
+                for (let i = 0; i < 100; i++) {
+                    try {
+                        textureData.push(...ValuesToHeatmap_1.default(0, 100, Math.random() * 100));
+                    }
+                    catch (e) {
+                        console.error(e);
+                    }
+                }
                 var texture = new BABYLON.RawTexture(
                 //new Uint32Array(textureData),
                 new Uint8Array(textureData), 10, 10, BABYLON.Engine.TEXTUREFORMAT_RGB, this._scene, false, false, BABYLON.Texture.TRILINEAR_SAMPLINGMODE);
-                var heatmapPlane = BABYLON.MeshBuilder.CreatePlane("heatmapPlane", { width: 800, height: 450 }, this._scene);
+                var heatmapPlane = BABYLON.MeshBuilder.CreatePlane("heatmapPlane", { width: 450 /*800*/, height: 450 }, this._scene);
                 var heatmapMaterial = new BABYLON.StandardMaterial("heatmapMaterial", this._scene);
                 heatmapMaterial.diffuseTexture = texture;
+                heatmapMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
                 heatmapPlane.material = heatmapMaterial;
                 heatmapPlane.rotation = new BABYLON.Vector3(1.5708, 0.2530727, 0);
                 heatmapPlane.position = new BABYLON.Vector3(bridgeMesh.position.x, bridgeMesh.position.y - 73, bridgeMesh.position.z);
                 heatmapPlane.renderingGroupId = 2;
-                const polyCorners = [
-                    new BABYLON.Vector2(50, 0),
-                    new BABYLON.Vector2(150, 0),
-                    new BABYLON.Vector2(100, 50),
-                    new BABYLON.Vector2(0, 50)
-                ];
-                const poly = new BABYLON.PolygonMeshBuilder("poly", polyCorners);
-                const polyMesh = poly.build();
-                polyMesh.position = new BABYLON.Vector3(-80, -50, 105);
+                // const polyCorners = [
+                //     new BABYLON.Vector2(50,0),
+                //     new BABYLON.Vector2(150, 0),
+                //     new BABYLON.Vector2(100, 50),
+                //     new BABYLON.Vector2(0, 50)
+                // ];
+                const polyOptions = {
+                    shape: [
+                        new BABYLON.Vector3(50, 0, 0),
+                        new BABYLON.Vector3(150, 0, 0),
+                        new BABYLON.Vector3(100, 50, 0),
+                        new BABYLON.Vector3(0, 50, 0)
+                    ]
+                };
+                //const poly = new BABYLON.PolygonMeshBuilder("poly", polyCorners, this._scene, earcut);
+                //const polyMesh = poly.build();
+                // polyMesh.position = new BABYLON.Vector3(-80, -50, 105);
+                const poly = BABYLON.MeshBuilder.CreatePolygon("poly", polyOptions, this._scene, earcut);
+                poly.position = new BABYLON.Vector3(-80, -50, 105);
                 //heatmapPlane.position = new BABYLON.Vector3(0, 0, 0);
             }, e => console.log("Loading Bridge..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
             var light1 = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), this._scene);
@@ -178,6 +194,18 @@ class Environment {
             // const road = this._bridgeMeshes.find(m => m.id === "SketchUp.019__0");
             // bridgeMaterial.emissiveTexture = dynamicTexture;
         });
+    }
+    _createSkyBox() {
+        const skybox = BABYLON.MeshBuilder.CreateBox("skyBox", { size: 1000 }, this._scene);
+        const skyboxMaterial = new BABYLON.StandardMaterial("skyBox", this._scene);
+        skyboxMaterial.backFaceCulling = false;
+        skyboxMaterial.reflectionTexture = new BABYLON.CubeTexture("img/sky3/skybox", this._scene);
+        skyboxMaterial.reflectionTexture.coordinatesMode = BABYLON.Texture.SKYBOX_MODE;
+        skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
+        skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+        //skybox.position = new BABYLON.Vector3(300, 700, 1000);
+        skybox.position = this._scene.activeCamera.position;
+        skybox.material = skyboxMaterial;
     }
 }
 exports.Environment = Environment;
