@@ -6,7 +6,7 @@
  * @param val - Value for color to be calculated
  * @param colors - Array of RGB tuples for color gradients
  */
-export default function convertValuesToHeatmap(minval: number, maxval: number, val: number, colors: Array<[number, number, number]> = [[0, 0, 255], [0, 255, 0], [255, 0, 0]]) : [number, number, number]{
+export default function convertValuesToHeatmap(minval: number, maxval: number, val: number, colors: Array<[number, number, number]> = [[0, 0, 255], [0, 255, 0], [255,165,0], [255, 0, 0]]) : [number, number, number]{
 
     if(val < minval || val > maxval){
         throw "Heatmap value out of range";
@@ -17,7 +17,7 @@ export default function convertValuesToHeatmap(minval: number, maxval: number, v
 
     // Find lower index of the pair of color indices for the value
     // This is the fractional distance between lower and upper colors
-    const whole = Math.floor(p);
+    const whole = ~~p;
     const frac = p % 1;
 
     // Return the color if it falls on a given color exactly

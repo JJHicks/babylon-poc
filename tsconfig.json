@@ -1,13 +1,13 @@
 {
     "compilerOptions": {
-      "target": "es6",
+      "target": "esnext",
       "module": "commonjs",
       "noResolve": false,
       "noImplicitAny": true,
       "preserveConstEnums":true,
       "lib": [
           "dom",
-          "es6"
+          "esnext"
       ],
       "rootDir": "src",
       "sourceMap": true,

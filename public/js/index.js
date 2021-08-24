@@ -1,2 +1,3 @@
-flatpickr("#startDate", {});
-flatpickr("#endDate", {});
+flatpickr("#date", {
+    defaultDate: new Date() 
+});

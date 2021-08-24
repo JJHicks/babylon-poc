@@ -23,12 +23,14 @@
     "babylonjs": "^4.2.0",
     "babylonjs-gui": "^4.2.0",
     "babylonjs-loaders": "^4.2.0",
-    "earcut": "^2.2.3"
+    "earcut": "^2.2.3",
+    "luxon": "^2.0.2"
   },
   "devDependencies": {
     "@babylonjs/core": "^4.2.0",
     "@babylonjs/inspector": "^4.2.0",
     "@types/earcut": "^2.1.1",
+    "@types/luxon": "^2.0.0",
     "clean-webpack-plugin": "^4.0.0-alpha.0",
     "html-webpack-plugin": "^5.3.2",
     "source-map-loader": "^3.0.0",

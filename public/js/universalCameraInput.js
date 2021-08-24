@@ -3,6 +3,13 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.UniversalCameraInput = void 0;
 const babylonjs_1 = require("babylonjs");
 class UniversalCameraInput {
+    // the input manager will fill the parent camera
+    camera;
+    _keys;
+    _keysLeft;
+    _keysRight;
+    _sensibility;
+    _noPreventDefault;
     constructor() {
         this._keysLeft = [65, 37];
         this._keysRight = [68, 39];
@@ -19,7 +26,7 @@ class UniversalCameraInput {
     }
     //this function must activate your input, event if your input does not need a DOM element
     attachControl(noPreventDefault) {
-        this._noPreventDefault = noPreventDefault !== null && noPreventDefault !== void 0 ? noPreventDefault : false;
+        this._noPreventDefault = noPreventDefault ?? false;
         var engine = this.camera.getEngine();
         var element = engine.getInputElement();
         if (!this._onKeyDown) {

@@ -2,6 +2,11 @@ body {
   height: 100vh;
 }
 
+main {
+  height: 100%;
+  position: relative;
+}
+
 header {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -18,8 +23,19 @@ header {
   color: #fff;
 }
 
+header > * {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
 header .form-group, header .form-check {
   margin-left: 20px;
+}
+
+.slider-container {
+  padding-left: 1.5em;
+  margin-bottom: .125rem;
 }
 
 #renderCanvas {
@@ -27,5 +43,14 @@ header .form-group, header .form-check {
   width: 100% !important;
   -ms-touch-action: none;
       touch-action: none;
+}
+
+footer {
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  background-color: transparent;
+  padding: 3rem 10rem;
+  color: #fff;
 }
 /*# sourceMappingURL=style.css.map */

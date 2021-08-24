@@ -2,6 +2,11 @@ body{
     height: 100vh;
 }
 
+main{
+    height: 100%;
+    position: relative;
+}
+
 header{
     display: flex;
     align-items: center;
@@ -11,9 +16,18 @@ header{
     padding: .5rem;
     color: #fff;
 
+    > *{
+        display: flex;
+    }
+
     .form-group, .form-check{
         margin-left: 20px;
     }
+}
+
+.slider-container{
+    padding-left: 1.5em;
+    margin-bottom: .125rem;
 }
 
 #renderCanvas{
@@ -21,3 +35,13 @@ header{
     width: 100% !important;
     touch-action: none;
 }
+
+footer{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    background-color: transparent;
+    padding: 3rem 10rem;
+    color: #fff;
+}
+
