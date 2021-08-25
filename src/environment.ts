@@ -23,7 +23,6 @@ export class Environment{
     }
 
     public async load() {
-       
         await this._loadAssets();
     }
 
@@ -35,129 +34,85 @@ export class Environment{
     }
 
     private async _loadAssets() {
-
-        // Sample heatmap usage
-        // const minval = 1;
-        // const maxval = 3;
-        // const steps = 10;
-        // const delta = (maxval - minval) / steps;
-        // console.log('  Val       R    G    B');
-        // for(let i = 0; i < steps; i++){
-        //     const val = minval + (i * delta);
-        //     try{
-        //         let r,g,b;
-        //         [r,g,b] = convertValuesToHeatmap(minval, maxval, val);
-        //         console.log(`${val.toFixed(2)} -> (${r.toFixed(2)}, ${g.toFixed(2)}, ${b.toFixed(2)})`);
-        //     } catch (e) {
-        //         console.error(e);
-        //     }
-        // }
-
-
-        // THE SKY
         this._createSkyBox();
+        this._createLights();
+        await this._createTerrain();
+        await this._createBridge();
+        this._createSensors();
+        this._createHeatmapPlane();        
+    }
 
-        // THE TERRAIN
-        BABYLON.SceneLoader.ImportMesh(null, "../models/scene/terrain/", "BridgeTerrainBuildings.gltf", this._scene,
-        (meshes, particleSytems, skeletons) => {
+    private async _createBridge(){
+        const bridgeImport = await BABYLON.SceneLoader.ImportMeshAsync(null, "../models/McFarlandBridge/", "McFarland Bridge.gltf", this._scene,
+        e => console.log("Loading Bridge..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
 
-            var sceneMaterial = new BABYLON.StandardMaterial("scene", this._scene);
-            sceneMaterial.diffuseColor = new BABYLON.Color3(1, 1, 0);
+        var bridgeMaterial = new BABYLON.StandardMaterial("bridgeSurface", this._scene);
+        bridgeMaterial.diffuseColor = new BABYLON.Color3(.617, .105, .195);
 
-            var sceneMesh = meshes[0] as BABYLON.Mesh;
-            sceneMesh.scaling.copyFromFloats(12, 12, 12);
+        bridgeImport.meshes.forEach(m => {
+            m.receiveShadows = true;
+            m.checkCollisions = true;
+            m.renderingGroupId = 2;
+        });
 
-            meshes.forEach(mesh => {
-                mesh.renderingGroupId = 2;
-            });
+        bridgeImport.meshes[1].material = bridgeMaterial;
 
-            sceneMesh.material = sceneMaterial;
-        }, e => console.log("Loading Scene..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
+        this._bridgeMeshes = bridgeImport.meshes;     
 
-        // THE BRIDGE
+        var bridgeMesh = bridgeImport.meshes[0] as BABYLON.Mesh;
+        bridgeMesh.scaling.copyFromFloats(0.3, 0.3, 0.3);
+        
+        bridgeMesh.rotation = new BABYLON.Vector3(0, 1.462586, 0);
+        bridgeMesh.position = new BABYLON.Vector3(-80, -50, 105);
+    }
 
-        BABYLON.SceneLoader.ImportMesh(null, "../models/McFarlandBridge/", "McFarland Bridge.gltf", this._scene,
-            (meshes, particleSytems, skeletons) => {
+    private async _createTerrain(){
+        const terrainImport = await BABYLON.SceneLoader.ImportMeshAsync(null, "../models/scene/terrain/", "BridgeTerrainBuildings.gltf", this._scene,
+        e => console.log("Loading Scene..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
 
-                var bridgeMaterial = new BABYLON.StandardMaterial("bridgeSurface", this._scene);
-                bridgeMaterial.diffuseColor = new BABYLON.Color3(.617, .105, .195);
+        var sceneMaterial = new BABYLON.StandardMaterial("scene", this._scene);
+        sceneMaterial.diffuseColor = new BABYLON.Color3(1, 1, 0);
 
-                meshes.forEach(m => {
-                    m.receiveShadows = true;
-                    m.checkCollisions = true;
-                    m.renderingGroupId = 2;
-                });
+        var sceneMesh = terrainImport.meshes[0] as BABYLON.Mesh;
+        sceneMesh.scaling.copyFromFloats(12, 12, 12);
 
-                meshes[1].material = bridgeMaterial;
+        terrainImport.meshes.forEach(mesh => {
+            mesh.renderingGroupId = 2;
+        });
 
-                this._bridgeMeshes = meshes;     
-
-                var bridgeMesh = meshes[0] as BABYLON.Mesh;
-                bridgeMesh.scaling.copyFromFloats(0.3, 0.3, 0.3);
-                
-                bridgeMesh.rotation = new BABYLON.Vector3(0, 1.462586, 0);
-                bridgeMesh.position = new BABYLON.Vector3(-80, -50, 105);
-                
-                var sensor1 = this.sensorsMeshes.find(s => s.name === "sensor_1");
-
-                // Create heatmap surface
-                var textureData: any[] = [];
-
-                for(let i = 0; i < 100; i++){
-                    try{
-                        textureData.push(...convertValuesToHeatmap(0, 100, Math.random() * 100));
-                    } catch (e) {
-                        console.error(e);
-                    }
-                }
-
-                var texture = new BABYLON.RawTexture(
-                    new Uint8Array(textureData),
-                    4,
-                    2,
-                    BABYLON.Engine.TEXTUREFORMAT_RGB,
-                    this._scene,
-                    false,
-                    false,
-                    BABYLON.Texture.TRILINEAR_SAMPLINGMODE
-                );
-
-                var heatmapMaterial = new BABYLON.StandardMaterial("heatmapMaterial", this._scene);
-                heatmapMaterial.diffuseTexture = texture;
-                heatmapMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-
-                const deckSkew = 165;
-                const deckWidth = 900;
-                const deckHeight = 450; 
-                const polyCorners = [
-                    new BABYLON.Vector2(0 + deckSkew, 0),
-                    new BABYLON.Vector2(deckWidth + deckSkew, 0),
-                    new BABYLON.Vector2(deckWidth, deckHeight),
-                    new BABYLON.Vector2(0, deckHeight)
-                ];
-
-                const deckXoffset = 570;
-                const deckYoffset = 73;
-                const deckZoffset = 90
-
-                const staticDeck = new BABYLON.PolygonMeshBuilder("heatmapPoly", polyCorners, this._scene, earcut.default);
-                this.deckMesh = staticDeck.build();
-                this.deckMesh.position = new BABYLON.Vector3(bridgeMesh.position.x - deckXoffset, bridgeMesh.position.y - deckYoffset, bridgeMesh.position.z - deckZoffset);
-                this.deckMesh.renderingGroupId = 2;
-                this.deckMesh.rotation = new BABYLON.Vector3(0, 14 * (Math.PI/180), 0);
-
-                const deck = new BABYLON.PolygonMeshBuilder("heatmapPoly", polyCorners, this._scene, earcut.default);
-                this.deckMesh = deck.build();
-                this.deckMesh.position = new BABYLON.Vector3(bridgeMesh.position.x - deckXoffset, bridgeMesh.position.y - deckYoffset, bridgeMesh.position.z - deckZoffset);
-                this.deckMesh.renderingGroupId = 2;
-                this.deckMesh.material = heatmapMaterial;                
-                this.deckMesh.rotation = new BABYLON.Vector3(0, 14 * (Math.PI/180), 0);
-
-            }, e => console.log("Loading Bridge..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
+        sceneMesh.material = sceneMaterial;
+    }
     
-        var light1: BABYLON.HemisphericLight = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), this._scene);
+    private _createHeatmapPlane(){
+        const bridgeMesh = this._bridgeMeshes[0];
+        const deckSkew = 165;
+        const deckWidth = 900;
+        const deckHeight = 450; 
+        const polyCorners = [
+            new BABYLON.Vector2(0 + deckSkew, 0),
+            new BABYLON.Vector2(deckWidth + deckSkew, 0),
+            new BABYLON.Vector2(deckWidth, deckHeight),
+            new BABYLON.Vector2(0, deckHeight)
+        ];
 
-        // SENSORS
+        const deckXoffset = 570;
+        const deckYoffset = 73;
+        const deckZoffset = 90
+
+        const staticDeck = new BABYLON.PolygonMeshBuilder("heatmapPoly", polyCorners, this._scene, earcut.default);
+        this.deckMesh = staticDeck.build();
+        this.deckMesh.position = new BABYLON.Vector3(bridgeMesh.position.x - deckXoffset, bridgeMesh.position.y - deckYoffset, bridgeMesh.position.z - deckZoffset);
+        this.deckMesh.renderingGroupId = 2;
+        this.deckMesh.rotation = new BABYLON.Vector3(0, 14 * (Math.PI/180), 0);
+
+        const deck = new BABYLON.PolygonMeshBuilder("heatmapPoly", polyCorners, this._scene, earcut.default);
+        this.deckMesh = deck.build();
+        this.deckMesh.position = new BABYLON.Vector3(bridgeMesh.position.x - deckXoffset, bridgeMesh.position.y - deckYoffset, bridgeMesh.position.z - deckZoffset);
+        this.deckMesh.renderingGroupId = 2;           
+        this.deckMesh.rotation = new BABYLON.Vector3(0, 14 * (Math.PI/180), 0);
+    }
+
+    private _createSensors(){
         var sensorMaterial = new BABYLON.StandardMaterial("sensorMaterial", this._scene);
         sensorMaterial.diffuseColor = new BABYLON.Color3(1, 20/255, 147/255);
 
@@ -170,19 +125,10 @@ export class Environment{
             //sensorMesh.showBoundingBox = true;
             this.sensorsMeshes.push(sensorMesh);
         });
- 
-        this.applyHeatmap(true);
     }
 
-    
-    public applyHeatmap(show = true){
-        api.getSensorData().then(res => {
-            res.sensors.forEach(sd => {
-                const sensor = window.store.sensors.find((s: SensorInfo) => s.id === sd.id);
-                if(sensor)
-                    sensor.reading = sd.reading;
-            });
-        });      
+    private _createLights(){
+        var light1: BABYLON.HemisphericLight = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), this._scene);
     }
 
     private _createSkyBox(){

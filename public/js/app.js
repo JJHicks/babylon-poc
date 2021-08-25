@@ -51,10 +51,7 @@ class App {
         // Initialize babylon scene and engine
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene = new BABYLON.Scene(this._engine);
-        this._initCamera();
-        // Load environment
         this._environment = new environment_1.Environment(this._scene);
-        this._environment.load();
         // hide/show the Inspector, i
         window.addEventListener("keydown", (ev) => {
             if (ev.keyCode === 73) {
@@ -70,10 +67,14 @@ class App {
         this._engine.runRenderLoop(() => {
             this._scene.render();
         });
-        // Remove later
-        this._generateFalseSensorData();
+        this._buildEnvironment();
+    }
+    async _buildEnvironment() {
+        this._initCamera();
+        await this._environment.load();
         this._addEvents();
         this._initInfoDisplay();
+        this._generateFalseSensorData();
     }
     _addEvents() {
         document.getElementById("sensorsInFront").addEventListener("change", e => {
@@ -86,7 +87,8 @@ class App {
         document.getElementById("changeHeatmap").addEventListener("click", e => this._updateHeatmap());
         document.getElementById("timeSelect").addEventListener("input", e => {
             const val = document.getElementById("timeSelect").value;
-            document.getElementById("timeDisplay").innerText = window.store.timesShown[val];
+            document.getElementById("timeDisplay").innerText = window.store.timesShown[val].toLocaleString(luxon_1.DateTime.DATETIME_SHORT);
+            this._updateHeatmap();
         });
         document.getElementById("showHeatmap").addEventListener("change", e => this._adjustDeckHeatmapAlpha());
         document.getElementById("heatmapOpacity").addEventListener("input", e => this._adjustDeckHeatmapAlpha());
@@ -114,33 +116,46 @@ class App {
         window.store.timesShown = [];
         hours.forEach((hour) => {
             minutes.forEach((minute) => {
-                console.log(`${date}T${hour}:${minute}`);
                 window.store.timesShown.push(luxon_1.DateTime.fromISO(`${date}T${hour}:${minute}`));
             });
         });
         const slider = document.getElementById("timeSelect");
-        slider.max = slider.value = window.store.timesShown.length;
-        document.getElementById("timeDisplay").innerText = window.store.timesShown[parseInt(slider.max) - 1];
+        slider.max = slider.value = (window.store.timesShown.length - 1).toString();
+        document.getElementById("timeDisplay").innerText = window.store.timesShown[parseInt(slider.max) - 1].toLocaleString(luxon_1.DateTime.DATETIME_SHORT);
+        ;
         window.store.sensors.forEach((sensor) => {
+            sensor.data = [];
         });
+        window.store.timesShown.forEach((time) => {
+            window.store.sensors.forEach((sensor) => {
+                sensor.data.push({ datetime: time, value: Math.random() * 100 });
+            });
+        });
+        this._updateHeatmap();
     }
     _updateHeatmap() {
-        var textureData = [];
-        for (let i = 0; i < 100; i++) {
+        const timeSliderValue = document.getElementById("timeSelect").value;
+        const time = window.store.timesShown[timeSliderValue];
+        const dateTimeSelected = luxon_1.DateTime.fromISO(time);
+        const textureOrderedSensors = window.store.sensors.sort((a, b) => a.textureOrder - b.textureOrder);
+        let textureData = [];
+        textureOrderedSensors.map((s) => {
+            const data = s.data.find((d) => d.datetime.equals(dateTimeSelected));
             try {
-                textureData.push(...ValuesToHeatmap_1.default(0, 100, Math.random() * 100));
+                textureData.push(...ValuesToHeatmap_1.default(0, 100, data !== undefined ? data.value : 0));
             }
             catch (e) {
                 console.error(e);
             }
-        }
-        this._environment.deckMesh.material.dispose();
+        });
+        this._environment.deckMesh.material?.dispose();
         var texture = new BABYLON.RawTexture(new Uint8Array(textureData), 4, 2, BABYLON.Engine.TEXTUREFORMAT_RGB, this._scene, false, false, BABYLON.Texture.TRILINEAR_SAMPLINGMODE);
         var heatmapMaterial = new BABYLON.StandardMaterial("heatmapMaterial", this._scene);
         heatmapMaterial.diffuseTexture = texture;
         heatmapMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         //var animation = new BABYLON.Animation("heatmapAnimation", "material.texture", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
         this._environment.deckMesh.material = heatmapMaterial;
+        this._adjustDeckHeatmapAlpha();
     }
     _adjustDeckHeatmapAlpha() {
         const show = document.getElementById("showHeatmap").checked ? 1 : 0;

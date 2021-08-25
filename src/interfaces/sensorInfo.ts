@@ -1,8 +1,11 @@
+import { DateTime } from "luxon";
+
 export interface SensorInfo {
     id: string,
     name: string,
     position: SensorPosition,
-    data: SensorData[]
+    data: SensorData[],
+    textureOrder: number
 }
 
 interface SensorPosition {
@@ -11,7 +14,7 @@ interface SensorPosition {
     z: number
 }
 
-interface SensorData {
-    datetime: Date,
+export interface SensorData {
+    datetime: DateTime,
     value: number
 }

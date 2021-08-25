@@ -6,7 +6,7 @@ import { Environment } from "./environment";
 import * as GUI from "babylonjs-gui";
 import { api } from "./api/api";
 import sensors from "./data/sensors.json";
-import { SensorInfo } from "./interfaces/sensorInfo";
+import { SensorInfo, SensorData } from "./interfaces/sensorInfo";
 import convertValuesToHeatmap from "./helpers/ValuesToHeatmap";
 import { DateTime } from "luxon";
 import { HtmlElementTexture } from "babylonjs/Materials/Textures/htmlElementTexture";
@@ -37,12 +37,7 @@ class App {
         // Initialize babylon scene and engine
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene = new BABYLON.Scene(this._engine);
-
-        this._initCamera();
-        
-        // Load environment
         this._environment = new Environment(this._scene);
-        this._environment.load();
 
         // hide/show the Inspector, i
         window.addEventListener("keydown", (ev) => {
@@ -60,11 +55,16 @@ class App {
             this._scene.render();
         });
 
-        // Remove later
-        this._generateFalseSensorData();
+        this._buildEnvironment();
+    }
 
+    private async _buildEnvironment(){
+        this._initCamera();
+        await this._environment.load();
+    
         this._addEvents();
         this._initInfoDisplay();
+        this._generateFalseSensorData();
     }
 
     private _addEvents(){
@@ -83,7 +83,8 @@ class App {
 
         document.getElementById("timeSelect").addEventListener("input", e => {
             const val = (document.getElementById("timeSelect") as HTMLInputElement).value;
-            document.getElementById("timeDisplay").innerText = window.store.timesShown[val];
+            document.getElementById("timeDisplay").innerText = (window.store.timesShown[val] as DateTime).toLocaleString(DateTime.DATETIME_SHORT);
+            this._updateHeatmap();
         });
 
         document.getElementById("showHeatmap").addEventListener("change", e => this._adjustDeckHeatmapAlpha());
@@ -119,33 +120,47 @@ class App {
 
         hours.forEach((hour: string) => {
             minutes.forEach((minute: string) => {
-                console.log(`${date}T${hour}:${minute}`);
                 window.store.timesShown.push(DateTime.fromISO(`${date}T${hour}:${minute}`))
             });
         });
 
         const slider = document.getElementById("timeSelect") as HTMLInputElement;
-        slider.max = slider.value = window.store.timesShown.length;
-        document.getElementById("timeDisplay").innerText = window.store.timesShown[parseInt(slider.max) - 1];
+        slider.max = slider.value = (window.store.timesShown.length - 1).toString();
+        document.getElementById("timeDisplay").innerText = (window.store.timesShown[parseInt(slider.max) - 1] as DateTime).toLocaleString(DateTime.DATETIME_SHORT);;
 
         window.store.sensors.forEach((sensor: SensorInfo) => {
-            
+            sensor.data = [];
         });
+
+        window.store.timesShown.forEach((time: DateTime) => {
+            window.store.sensors.forEach((sensor: SensorInfo) => {
+                sensor.data.push({ datetime: time, value: Math.random() * 100 });
+            });
+        });
+
+        this._updateHeatmap();
     }
 
     private _updateHeatmap(){
 
-        var textureData: any[] = [];
+        const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
+        const time = window.store.timesShown[timeSliderValue];
+        const dateTimeSelected = DateTime.fromISO(time);
 
-        for(let i = 0; i < 100; i++){
+        const textureOrderedSensors = window.store.sensors.sort((a: SensorInfo, b: SensorInfo) => a.textureOrder - b.textureOrder);
+
+        let textureData: any[] = [];
+
+        textureOrderedSensors.map((s: SensorInfo) => {
+            const data = s.data.find((d: SensorData) => d.datetime.equals(dateTimeSelected));
             try{
-                textureData.push(...convertValuesToHeatmap(0, 100, Math.random() * 100));
+                textureData.push(...convertValuesToHeatmap(0, 100, data !== undefined ? data.value : 0));
             } catch (e) {
                 console.error(e);
             }
-        }
-
-        this._environment.deckMesh.material.dispose();
+        });
+        
+        this._environment.deckMesh.material?.dispose();
 
         var texture = new BABYLON.RawTexture(
             new Uint8Array(textureData),
@@ -164,8 +179,8 @@ class App {
 
         //var animation = new BABYLON.Animation("heatmapAnimation", "material.texture", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
-
         this._environment.deckMesh.material = heatmapMaterial;
+        this._adjustDeckHeatmapAlpha();
     }
 
     private _adjustDeckHeatmapAlpha(){
