@@ -8,6 +8,7 @@ main{
 }
 
 header{
+    width: 100%;
     display: flex;
     align-items: center;
     justify-content: start;
@@ -17,11 +18,35 @@ header{
     color: #fff;
 
     > *{
+        width: 100%;
         display: flex;
     }
 
     .form-group, .form-check{
         margin-left: 20px;
+    }
+}
+
+#sensorDataDisplayContainer{
+    color: #000;
+    margin-left: auto;
+    background-color: #e8e8e8;
+    border: 3px solid #fff;
+    border-radius: 4px;
+    opacity: .8;
+    min-width: 300px;
+    padding: .5rem 2rem;
+
+    .sensorDataRow{
+        display: flex;
+
+        .sensorDataName{
+            flex: 50% 0 0;
+        }
+        .sensorDataValue{
+            flex: 50% 0 0;
+            //text-align: right;
+        }
     }
 }
 
@@ -45,3 +70,21 @@ footer{
     color: #fff;
 }
 
+#playbackControlContainer{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    input{
+        flex: auto 1 1;
+    }
+}
+
+#playbackIconContainer{
+    flex: auto 1 0;
+    padding: 1rem;
+
+    #playbackIcon{
+        font-size: 1.5rem;
+        cursor: pointer;
+    }    
+}

@@ -9,7 +9,6 @@ import sensors from "./data/sensors.json";
 import { SensorInfo, SensorData } from "./interfaces/sensorInfo";
 import convertValuesToHeatmap from "./helpers/ValuesToHeatmap";
 import { DateTime } from "luxon";
-import { HtmlElementTexture } from "babylonjs/Materials/Textures/htmlElementTexture";
 
 class App {
 
@@ -22,6 +21,8 @@ class App {
 
     private _infoDisplayTexture: GUI.AdvancedDynamicTexture;
     private _infoDisplayTextBlock: GUI.TextBlock;
+
+    private _playbackInterval: number;
 
     constructor() {
 
@@ -63,8 +64,11 @@ class App {
         await this._environment.load();
     
         this._addEvents();
+        // Babylon GUI
         this._initInfoDisplay();
         this._generateFalseSensorData();
+        // HTML Overlay
+        this._initSensorDataDisplay();
     }
 
     private _addEvents(){
@@ -79,16 +83,19 @@ class App {
         //     api.getSensorData().then(res => console.log(res));
         // });
 
-        document.getElementById("changeHeatmap").addEventListener("click", e => this._updateHeatmap());
+        //document.getElementById("changeHeatmap").addEventListener("click", e => this._updateHeatmap());
 
         document.getElementById("timeSelect").addEventListener("input", e => {
-            const val = (document.getElementById("timeSelect") as HTMLInputElement).value;
-            document.getElementById("timeDisplay").innerText = (window.store.timesShown[val] as DateTime).toLocaleString(DateTime.DATETIME_SHORT);
-            this._updateHeatmap();
+            if(this._playbackInterval !== undefined){
+                this._togglePlayback();
+            }
+            this._handleTimeChange();
         });
 
         document.getElementById("showHeatmap").addEventListener("change", e => this._adjustDeckHeatmapAlpha());
+        document.getElementById("showSensorData").addEventListener("change", e => this._toggleShowSensorData());
         document.getElementById("heatmapOpacity").addEventListener("input", e => this._adjustDeckHeatmapAlpha());
+        document.getElementById("playbackIcon").addEventListener("click", e => this._togglePlayback());
 
         window.addEventListener("resize", () => {
             this._canvas.width = window.innerWidth;
@@ -109,6 +116,78 @@ class App {
                 this._infoDisplayTextBlock.text = `${firstSensorHitByRay.pickedMesh.name} - ${sensor.id}`;
             }
         }
+    }
+
+    private _handleTimeChange(){
+        const val = (document.getElementById("timeSelect") as HTMLInputElement).value;
+        document.getElementById("timeDisplay").innerText = (window.store.timesShown[val] as DateTime).toLocaleString(DateTime.DATETIME_SHORT);
+        this._updateHeatmap();
+    }
+
+    private _initSensorDataDisplay(){
+        const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLElement;
+
+        let rows = displayContainer.getElementsByClassName(".sensorRowData");
+        while(rows[0]) rows[0].parentNode.removeChild(rows[0]);
+
+        const template = document.getElementById("sensorDataDisplayRowTemplate") as HTMLTemplateElement;
+        window.store.sensors.forEach((sensor: SensorInfo) => {
+
+            let row = template.content.cloneNode(true) as HTMLElement;
+            const nameSection = row.querySelector(".sensorDataName") as HTMLElement;
+            const valueSection = row.querySelector(".sensorDataValue") as HTMLElement;
+            
+            nameSection.textContent = sensor.name;
+            valueSection.dataset.id = sensor.id;
+
+            displayContainer.appendChild(row);
+        });
+
+        this._updateSensorDataDisplay();
+    }
+
+    private _updateSensorDataDisplay(){
+        const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLInputElement;
+        const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
+        const time = window.store.timesShown[timeSliderValue];
+        const dateTimeSelected = DateTime.fromISO(time);
+
+        window.store.sensors.forEach((sensor: SensorInfo) => {
+            const timeData = sensor.data.find((d: SensorData) => d.datetime.equals(dateTimeSelected));
+            const field = displayContainer.querySelector(`.sensorDataValue[data-id="${sensor.id}"]`);
+            if(field === null) return;
+            field.textContent = timeData !== undefined ? timeData.value.toFixed(5).toString() : "- No Value";
+        });
+    }
+
+    private _toggleShowSensorData(){
+        const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLInputElement;
+        displayContainer.hidden = !(document.getElementById("showSensorData") as HTMLInputElement).checked;
+    }
+
+    private _togglePlayback(){
+        const icon = document.getElementById("playbackIcon") as HTMLElement;
+
+        if(this._playbackInterval !== undefined){
+            icon.classList.remove("fa-pause");
+            icon.classList.add("fa-play");
+            clearInterval(this._playbackInterval);
+            this._playbackInterval = undefined;
+            return;
+        }
+
+        icon.classList.remove("fa-play");
+        icon.classList.add("fa-pause");
+
+        this._playbackInterval = setInterval(() => {
+            const el = document.getElementById("timeSelect") as HTMLInputElement;
+            if(+el.value < +el.max){
+                el.value = (+el.value + (+el.step)).toString();
+            } else {
+                el.value = el.min;
+            }
+            this._handleTimeChange();
+        }, 1000);
     }
 
     private _generateFalseSensorData(){
@@ -138,16 +217,19 @@ class App {
             });
         });
 
+        this._toggleShowSensorData();
         this._updateHeatmap();
     }
 
     private _updateHeatmap(){
 
+        this._updateSensorDataDisplay();
+
         const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
         const time = window.store.timesShown[timeSliderValue];
         const dateTimeSelected = DateTime.fromISO(time);
 
-        const textureOrderedSensors = window.store.sensors.sort((a: SensorInfo, b: SensorInfo) => a.textureOrder - b.textureOrder);
+        const textureOrderedSensors = window.store.sensors.map((s: SensorInfo) => ({...s})).sort((a: SensorInfo, b: SensorInfo) => a.textureOrder - b.textureOrder);
 
         let textureData: any[] = [];
 

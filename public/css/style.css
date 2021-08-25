@@ -8,6 +8,7 @@ main {
 }
 
 header {
+  width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -24,6 +25,7 @@ header {
 }
 
 header > * {
+  width: 100%;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -31,6 +33,35 @@ header > * {
 
 header .form-group, header .form-check {
   margin-left: 20px;
+}
+
+#sensorDataDisplayContainer {
+  color: #000;
+  margin-left: auto;
+  background-color: #e8e8e8;
+  border: 3px solid #fff;
+  border-radius: 4px;
+  opacity: .8;
+  min-width: 300px;
+  padding: .5rem 2rem;
+}
+
+#sensorDataDisplayContainer .sensorDataRow {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+}
+
+#sensorDataDisplayContainer .sensorDataRow .sensorDataName {
+  -webkit-box-flex: 50%;
+      -ms-flex: 50% 0 0px;
+          flex: 50% 0 0;
+}
+
+#sensorDataDisplayContainer .sensorDataRow .sensorDataValue {
+  -webkit-box-flex: 50%;
+      -ms-flex: 50% 0 0px;
+          flex: 50% 0 0;
 }
 
 .slider-container {
@@ -52,5 +83,33 @@ footer {
   background-color: transparent;
   padding: 3rem 10rem;
   color: #fff;
+}
+
+#playbackControlContainer {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
+#playbackControlContainer input {
+  -webkit-box-flex: 1;
+      -ms-flex: auto 1 1;
+          flex: auto 1 1;
+}
+
+#playbackIconContainer {
+  -webkit-box-flex: 1;
+      -ms-flex: auto 1 0px;
+          flex: auto 1 0;
+  padding: 1rem;
+}
+
+#playbackIconContainer #playbackIcon {
+  font-size: 1.5rem;
+  cursor: pointer;
 }
 /*# sourceMappingURL=style.css.map */

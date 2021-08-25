@@ -40,6 +40,7 @@ class App {
     _environment;
     _infoDisplayTexture;
     _infoDisplayTextBlock;
+    _playbackInterval;
     constructor() {
         window.store = window.store || {};
         window.store.sensors = sensors_json_1.default;
@@ -73,8 +74,11 @@ class App {
         this._initCamera();
         await this._environment.load();
         this._addEvents();
+        // Babylon GUI
         this._initInfoDisplay();
         this._generateFalseSensorData();
+        // HTML Overlay
+        this._initSensorDataDisplay();
     }
     _addEvents() {
         document.getElementById("sensorsInFront").addEventListener("change", e => {
@@ -84,14 +88,17 @@ class App {
         // document.getElementById("showHeatmap").addEventListener("change", e => {
         //     api.getSensorData().then(res => console.log(res));
         // });
-        document.getElementById("changeHeatmap").addEventListener("click", e => this._updateHeatmap());
+        //document.getElementById("changeHeatmap").addEventListener("click", e => this._updateHeatmap());
         document.getElementById("timeSelect").addEventListener("input", e => {
-            const val = document.getElementById("timeSelect").value;
-            document.getElementById("timeDisplay").innerText = window.store.timesShown[val].toLocaleString(luxon_1.DateTime.DATETIME_SHORT);
-            this._updateHeatmap();
+            if (this._playbackInterval !== undefined) {
+                this._togglePlayback();
+            }
+            this._handleTimeChange();
         });
         document.getElementById("showHeatmap").addEventListener("change", e => this._adjustDeckHeatmapAlpha());
+        document.getElementById("showSensorData").addEventListener("change", e => this._toggleShowSensorData());
         document.getElementById("heatmapOpacity").addEventListener("input", e => this._adjustDeckHeatmapAlpha());
+        document.getElementById("playbackIcon").addEventListener("click", e => this._togglePlayback());
         window.addEventListener("resize", () => {
             this._canvas.width = window.innerWidth;
             this._canvas.height = window.innerHeight;
@@ -108,6 +115,66 @@ class App {
                 this._infoDisplayTextBlock.text = `${firstSensorHitByRay.pickedMesh.name} - ${sensor.id}`;
             }
         };
+    }
+    _handleTimeChange() {
+        const val = document.getElementById("timeSelect").value;
+        document.getElementById("timeDisplay").innerText = window.store.timesShown[val].toLocaleString(luxon_1.DateTime.DATETIME_SHORT);
+        this._updateHeatmap();
+    }
+    _initSensorDataDisplay() {
+        const displayContainer = document.getElementById("sensorDataDisplayContainer");
+        let rows = displayContainer.getElementsByClassName(".sensorRowData");
+        while (rows[0])
+            rows[0].parentNode.removeChild(rows[0]);
+        const template = document.getElementById("sensorDataDisplayRowTemplate");
+        window.store.sensors.forEach((sensor) => {
+            let row = template.content.cloneNode(true);
+            const nameSection = row.querySelector(".sensorDataName");
+            const valueSection = row.querySelector(".sensorDataValue");
+            nameSection.textContent = sensor.name;
+            valueSection.dataset.id = sensor.id;
+            displayContainer.appendChild(row);
+        });
+        this._updateSensorDataDisplay();
+    }
+    _updateSensorDataDisplay() {
+        const displayContainer = document.getElementById("sensorDataDisplayContainer");
+        const timeSliderValue = document.getElementById("timeSelect").value;
+        const time = window.store.timesShown[timeSliderValue];
+        const dateTimeSelected = luxon_1.DateTime.fromISO(time);
+        window.store.sensors.forEach((sensor) => {
+            const timeData = sensor.data.find((d) => d.datetime.equals(dateTimeSelected));
+            const field = displayContainer.querySelector(`.sensorDataValue[data-id="${sensor.id}"]`);
+            if (field === null)
+                return;
+            field.textContent = timeData !== undefined ? timeData.value.toFixed(5).toString() : "- No Value";
+        });
+    }
+    _toggleShowSensorData() {
+        const displayContainer = document.getElementById("sensorDataDisplayContainer");
+        displayContainer.hidden = !document.getElementById("showSensorData").checked;
+    }
+    _togglePlayback() {
+        const icon = document.getElementById("playbackIcon");
+        if (this._playbackInterval !== undefined) {
+            icon.classList.remove("fa-pause");
+            icon.classList.add("fa-play");
+            clearInterval(this._playbackInterval);
+            this._playbackInterval = undefined;
+            return;
+        }
+        icon.classList.remove("fa-play");
+        icon.classList.add("fa-pause");
+        this._playbackInterval = setInterval(() => {
+            const el = document.getElementById("timeSelect");
+            if (+el.value < +el.max) {
+                el.value = (+el.value + (+el.step)).toString();
+            }
+            else {
+                el.value = el.min;
+            }
+            this._handleTimeChange();
+        }, 1000);
     }
     _generateFalseSensorData() {
         const hours = Array.from(Array(24).keys()).map((el) => el.toString().padStart(2, "0"));
@@ -131,13 +198,15 @@ class App {
                 sensor.data.push({ datetime: time, value: Math.random() * 100 });
             });
         });
+        this._toggleShowSensorData();
         this._updateHeatmap();
     }
     _updateHeatmap() {
+        this._updateSensorDataDisplay();
         const timeSliderValue = document.getElementById("timeSelect").value;
         const time = window.store.timesShown[timeSliderValue];
         const dateTimeSelected = luxon_1.DateTime.fromISO(time);
-        const textureOrderedSensors = window.store.sensors.sort((a, b) => a.textureOrder - b.textureOrder);
+        const textureOrderedSensors = window.store.sensors.map((s) => ({ ...s })).sort((a, b) => a.textureOrder - b.textureOrder);
         let textureData = [];
         textureOrderedSensors.map((s) => {
             const data = s.data.find((d) => d.datetime.equals(dateTimeSelected));
