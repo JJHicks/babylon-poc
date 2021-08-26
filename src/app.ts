@@ -9,6 +9,7 @@ import sensors from "./data/sensors.json";
 import { SensorInfo, SensorData } from "./interfaces/sensorInfo";
 import convertValuesToHeatmap from "./helpers/ValuesToHeatmap";
 import { DateTime } from "luxon";
+import { SwitchBooleanAction } from "babylonjs/Actions/directActions";
 
 class App {
 
@@ -96,6 +97,8 @@ class App {
         document.getElementById("showSensorData").addEventListener("change", e => this._toggleShowSensorData());
         document.getElementById("heatmapOpacity").addEventListener("input", e => this._adjustDeckHeatmapAlpha());
         document.getElementById("playbackIcon").addEventListener("click", e => this._togglePlayback());
+        document.getElementById("showSensorLabels").addEventListener("change", e => this._toggleSensorLabels());
+
 
         window.addEventListener("resize", () => {
             this._canvas.width = window.innerWidth;
@@ -116,6 +119,31 @@ class App {
                 this._infoDisplayTextBlock.text = `${firstSensorHitByRay.pickedMesh.name} - ${sensor.id}`;
             }
         }
+    }
+    
+    private _toggleSensorLabels(){
+        const show = (document.getElementById("showSensorLabels") as HTMLInputElement).checked;
+        
+        if(show){
+            this._updateSensorLabels();
+            return;
+        } 
+        
+        this._environment.clearSensorLabels();
+    }
+
+    private _updateSensorLabels(){
+        const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
+        const time = window.store.timesShown[timeSliderValue];
+        const dateTimeSelected = DateTime.fromISO(time);
+
+        let data: any[] = [];
+
+        window.store.sensors.forEach((sensor: SensorInfo) => {
+            const timeData = sensor.data.find((d: SensorData) => d.datetime.equals(dateTimeSelected));
+            data.push({ id: sensor.id, value: timeData !== undefined ? timeData.value.toFixed(5).toString() : "- No Value" })
+        });
+        this._environment.updateSensorLabels(data);
     }
 
     private _handleTimeChange(){
@@ -224,6 +252,10 @@ class App {
     private _updateHeatmap(){
 
         this._updateSensorDataDisplay();
+
+        if(this._environment.sensorLabelsVisible){
+            this._updateSensorLabels();
+        }
 
         const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
         const time = window.store.timesShown[timeSliderValue];

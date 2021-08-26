@@ -13,9 +13,11 @@ export class Environment{
 
     private _scene: BABYLON.Scene;
     private _bridgeMeshes: BABYLON.AbstractMesh[];
+    private _sensorLabels: BABYLON.Sprite[];
 
     public deckMesh: BABYLON.Mesh;
     public sensorsMeshes: BABYLON.Mesh[];
+    public sensorLabelsVisible: boolean;
 
     constructor(scene: BABYLON.Scene) {
         this.sensorsMeshes = [];
@@ -31,6 +33,62 @@ export class Environment{
         this.sensorsMeshes.forEach(s => {
             s.renderingGroupId = group;
         });
+    }
+
+    public updateSensorLabels(data: any[]){
+        //console.log(data);
+
+        //Temp stuff
+        const sensorData = data[0]; 
+        const sensor = window.store.sensors.find((s: SensorInfo) => s.id === sensorData.id);
+
+        //End temp stuff
+
+        const text = sensor.name;
+        const font = "bold 32px monospace";
+
+        let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:512, height:256}, this._scene, false);  
+        //let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:128, height:64}, this._scene, false);     
+
+        // Change clearColor argument for background color, or set "transparent"
+        labelTexture.drawText(text, null, null, font, "white", "transparent", true, true);
+
+        let labelMaterial = new BABYLON.StandardMaterial("labelMaterial", this._scene);    				
+        labelMaterial.emissiveColor = new BABYLON.Color3(255, 255, 255);
+        labelMaterial.diffuseTexture = labelTexture;
+        labelMaterial.diffuseTexture.hasAlpha = true;
+
+        const labelWidth = this._measureTextWidth(text, font) + 10;
+        const labelHeight = 150;   
+
+        let label = BABYLON.MeshBuilder.CreatePlane("label1", {width: labelWidth, height: labelHeight, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, this._scene);
+        label.renderingGroupId = 2;
+
+        //label.position = new BABYLON.Vector3(this.deckMesh.position.x + 400, this.deckMesh.position.y + 200, this.deckMesh.position.z);
+        label.position = new BABYLON.Vector3(sensor.position.x, sensor.position.y + 50, sensor.position.z);
+
+        label.material = labelMaterial;
+        label.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+
+        // Sprite
+        //spm = new BABYLON.SpritePackedManager("spm", "textures/pack1.png", 40, this._scene);
+
+        this.sensorLabelsVisible = true;
+    }
+
+    private _measureTextWidth(text: string, font: string){
+        var temp = new BABYLON.DynamicTexture("TempDynamicTexture", {width:512, height:256}, this._scene, false);
+        //var temp = new BABYLON.DynamicTexture("TempDynamicTexture", {width:128, height:64}, this._scene, false);;
+        var tmpctx = temp.getContext();
+        tmpctx.font = font;
+        var DTWidth = tmpctx.measureText(text).width;
+        temp.dispose();
+        return DTWidth;
+    }
+
+    public clearSensorLabels(){
+        
+        this.sensorLabelsVisible = false;
     }
 
     private async _loadAssets() {

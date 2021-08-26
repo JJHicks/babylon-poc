@@ -99,6 +99,7 @@ class App {
         document.getElementById("showSensorData").addEventListener("change", e => this._toggleShowSensorData());
         document.getElementById("heatmapOpacity").addEventListener("input", e => this._adjustDeckHeatmapAlpha());
         document.getElementById("playbackIcon").addEventListener("click", e => this._togglePlayback());
+        document.getElementById("showSensorLabels").addEventListener("change", e => this._toggleSensorLabels());
         window.addEventListener("resize", () => {
             this._canvas.width = window.innerWidth;
             this._canvas.height = window.innerHeight;
@@ -115,6 +116,25 @@ class App {
                 this._infoDisplayTextBlock.text = `${firstSensorHitByRay.pickedMesh.name} - ${sensor.id}`;
             }
         };
+    }
+    _toggleSensorLabels() {
+        const show = document.getElementById("showSensorLabels").checked;
+        if (show) {
+            this._updateSensorLabels();
+            return;
+        }
+        this._environment.clearSensorLabels();
+    }
+    _updateSensorLabels() {
+        const timeSliderValue = document.getElementById("timeSelect").value;
+        const time = window.store.timesShown[timeSliderValue];
+        const dateTimeSelected = luxon_1.DateTime.fromISO(time);
+        let data = [];
+        window.store.sensors.forEach((sensor) => {
+            const timeData = sensor.data.find((d) => d.datetime.equals(dateTimeSelected));
+            data.push({ id: sensor.id, value: timeData !== undefined ? timeData.value.toFixed(5).toString() : "- No Value" });
+        });
+        this._environment.updateSensorLabels(data);
     }
     _handleTimeChange() {
         const val = document.getElementById("timeSelect").value;
@@ -203,6 +223,9 @@ class App {
     }
     _updateHeatmap() {
         this._updateSensorDataDisplay();
+        if (this._environment.sensorLabelsVisible) {
+            this._updateSensorLabels();
+        }
         const timeSliderValue = document.getElementById("timeSelect").value;
         const time = window.store.timesShown[timeSliderValue];
         const dateTimeSelected = luxon_1.DateTime.fromISO(time);
