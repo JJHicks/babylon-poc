@@ -214,8 +214,11 @@ class App {
             sensor.data = [];
         });
         window.store.timesShown.forEach((time) => {
+            // let tempVal = 0;
             window.store.sensors.forEach((sensor) => {
                 sensor.data.push({ datetime: time, value: Math.random() * 100 });
+                // sensor.data.push({ datetime: time, value: tempVal });
+                // tempVal += 12;
             });
         });
         this._toggleShowSensorData();

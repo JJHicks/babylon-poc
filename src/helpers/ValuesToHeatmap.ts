@@ -9,7 +9,7 @@
 export default function convertValuesToHeatmap(minval: number, maxval: number, val: number, colors: Array<[number, number, number]> = [[0, 0, 255], [0, 255, 0], [255,165,0], [255, 0, 0]]) : [number, number, number]{
 
     if(val < minval || val > maxval){
-        throw "Heatmap value out of range";
+        throw `Heatmap value out of range: ${val} - Min: ${minval} Max: ${maxval}`;
     }
 
     // Determine where the value falls proportionally, scaled by the number of colors given

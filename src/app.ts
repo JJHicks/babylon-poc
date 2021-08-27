@@ -123,7 +123,7 @@ class App {
     
     private _toggleSensorLabels(){
         const show = (document.getElementById("showSensorLabels") as HTMLInputElement).checked;
-        
+
         if(show){
             this._updateSensorLabels();
             return;
@@ -240,8 +240,11 @@ class App {
         });
 
         window.store.timesShown.forEach((time: DateTime) => {
+            // let tempVal = 0;
             window.store.sensors.forEach((sensor: SensorInfo) => {
                 sensor.data.push({ datetime: time, value: Math.random() * 100 });
+                // sensor.data.push({ datetime: time, value: tempVal });
+                // tempVal += 12;
             });
         });
 

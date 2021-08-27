@@ -9,7 +9,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  */
 function convertValuesToHeatmap(minval, maxval, val, colors = [[0, 0, 255], [0, 255, 0], [255, 165, 0], [255, 0, 0]]) {
     if (val < minval || val > maxval) {
-        throw "Heatmap value out of range";
+        throw `Heatmap value out of range: ${val} - Min: ${minval} Max: ${maxval}`;
     }
     // Determine where the value falls proportionally, scaled by the number of colors given
     const p = (val - minval) / (maxval - minval) * (colors.length - 1);

@@ -8,7 +8,7 @@
             "z": 194.21774096803875
         },
         "data" : [],
-        "textureOrder": 4
+        "textureOrder": 8
     },
     {
         "id" : "2",
@@ -19,7 +19,7 @@
             "z": 237.51418050785225
         },
         "data" : [],
-        "textureOrder": 3
+        "textureOrder": 7
     },
     {
         "id" : "3",
@@ -30,7 +30,7 @@
             "z": 304.14136964687225
         },
         "data" : [],
-        "textureOrder": 2
+        "textureOrder": 6
     },
     {
         "id" : "4",
@@ -41,7 +41,7 @@
             "z": 382.48801739618136
         },
         "data" : [],
-        "textureOrder": 1
+        "textureOrder": 5
     },
     {
         "id" : "5",
@@ -52,7 +52,7 @@
             "z": 16.513817516925393
         },
         "data" : [],
-        "textureOrder": 5
+        "textureOrder": 1
     },
     {
         "id" : "6",
@@ -63,7 +63,7 @@
             "z": -58.64604543028072
         },
         "data" : [],
-        "textureOrder": 6
+        "textureOrder": 2
     },
     {
         "id" : "7",
@@ -74,7 +74,7 @@
             "z": -123.95660214683346
         },
         "data" : [],
-        "textureOrder": 7
+        "textureOrder": 3
     },
     {
         "id" : "8",
@@ -85,6 +85,6 @@
             "z": -173.59578395035462
         },
         "data" : [],
-        "textureOrder": 8
+        "textureOrder": 4
     }
 ]
