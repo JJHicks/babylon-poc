@@ -3,11 +3,13 @@ import "@babylonjs/inspector";
 import "@babylonjs/loaders/glTF";
 import * as BABYLON from 'babylonjs';
 import 'babylonjs-loaders';
+import { _ThinInstanceDataStorage } from "babylonjs/Meshes/mesh";
 import * as earcut from 'earcut';
 (window as any).earcut = earcut;
 import { api } from "./api/api";
 import convertValuesToHeatmap from "./helpers/ValuesToHeatmap";
 import { SensorInfo } from "./interfaces/sensorInfo";
+import * as GUI from "babylonjs-gui";
 
 export class Environment{
 
@@ -37,9 +39,44 @@ export class Environment{
     }
 
     public updateSensorLabels(data: any[]){
-        //console.log(data);
+
         const titleFont = "bold 32px monospace";
         const dataFont = "bold 24px monospace";
+
+        function randstr() {
+            var result           = '';
+            var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for ( var i = 0; i < 8; i++ ) {
+              result += characters.charAt(Math.floor(Math.random() * charactersLength));
+           }
+           return result;
+        }
+
+        if(this._sensorLabels.length > 0){
+            this._sensorLabels.forEach((sensor: BABYLON.Mesh) => {
+                console.log(sensor);
+                
+                sensor.material.dispose(true, true, null);
+
+                let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:512, height:256}, this._scene, false);                   
+                // let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:256, height:128}, this._scene, false);    
+
+                // Change clearColor argument for background color, or set "transparent"
+                labelTexture.drawText(sensor.name, null, null, titleFont, "white", "transparent", true, true);
+                labelTexture.drawText(randstr(), null, 160, dataFont, "white", "transparent", true, true);
+
+                let labelMaterial = new BABYLON.StandardMaterial("labelMaterial", this._scene);    				
+                labelMaterial.emissiveColor = new BABYLON.Color3(255, 255, 255);
+                labelMaterial.diffuseTexture = labelTexture;
+                labelMaterial.diffuseTexture.hasAlpha = true;
+
+                sensor.material = labelMaterial;
+            });
+            return;
+        }
+        
+
 
         this.clearSensorLabels();
 
@@ -48,11 +85,13 @@ export class Environment{
             const readingValue = sensorData !== undefined ? sensorData.value : "No Value";
             const text = sensor.name;
 
-            let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:512, height:256}, this._scene, false);    
+            let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:512, height:256}, this._scene, false);  
+            // let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:128, height:128}, this._scene, false);  
 
             // Change clearColor argument for background color, or set "transparent"
             labelTexture.drawText(text, null, null, titleFont, "white", "transparent", true, true);
             labelTexture.drawText(readingValue, null, 160, dataFont, "white", "transparent", true, true);
+            // labelTexture.drawText(readingValue, null, 100, dataFont, "white", "transparent", true, true);
 
             let labelMaterial = new BABYLON.StandardMaterial("labelMaterial", this._scene);    				
             labelMaterial.emissiveColor = new BABYLON.Color3(255, 255, 255);
@@ -60,7 +99,8 @@ export class Environment{
             labelMaterial.diffuseTexture.hasAlpha = true;
 
             const labelWidth = this._measureTextWidth(text, titleFont) + 10;
-            const labelHeight = 200;   
+            const labelHeight = 200; 
+            //const labelHeight = 128;
 
             let label = BABYLON.MeshBuilder.CreatePlane(`label_${sensor.id}`, {width: labelWidth, height: labelHeight, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, this._scene);
             label.renderingGroupId = 3;
@@ -84,7 +124,9 @@ export class Environment{
     }
 
     public clearSensorLabels(){
-        this._sensorLabels.forEach((label: BABYLON.Mesh) => label.dispose());
+        this._sensorLabels.forEach((label: BABYLON.Mesh) => {
+            label.dispose(null, true);
+        });
         this._sensorLabels = [];
         this.sensorLabelsVisible = false;
     }
@@ -111,6 +153,7 @@ export class Environment{
             m.renderingGroupId = 2;
         });
 
+        bridgeMaterial.freeze();
         bridgeImport.meshes[1].material = bridgeMaterial;
 
         this._bridgeMeshes = bridgeImport.meshes;     
@@ -136,7 +179,9 @@ export class Environment{
             mesh.renderingGroupId = 2;
         });
 
+        sceneMaterial.freeze();
         sceneMesh.material = sceneMaterial;
+        sceneMesh.freezeWorldMatrix();
     }
     
     private _createHeatmapPlane(){
@@ -166,11 +211,14 @@ export class Environment{
         this.deckMesh.position = new BABYLON.Vector3(bridgeMesh.position.x - deckXoffset, bridgeMesh.position.y - deckYoffset, bridgeMesh.position.z - deckZoffset);
         this.deckMesh.renderingGroupId = 2;           
         this.deckMesh.rotation = new BABYLON.Vector3(0, 14 * (Math.PI/180), 0);
+
+        this.deckMesh.freezeWorldMatrix();
     }
 
     private _createSensors(){
         var sensorMaterial = new BABYLON.StandardMaterial("sensorMaterial", this._scene);
         sensorMaterial.diffuseColor = new BABYLON.Color3(1, 20/255, 147/255);
+        sensorMaterial.freeze();
 
         window.store.sensors.forEach((sensor: SensorInfo) => {
             var sensorMesh: BABYLON.Mesh = BABYLON.MeshBuilder.CreateSphere(sensor.name, { diameter: 5 }, this._scene);
@@ -179,6 +227,7 @@ export class Environment{
             sensorMesh.material = sensorMaterial;
             sensorMesh.renderingGroupId = 2;
             //sensorMesh.showBoundingBox = true;
+            sensorMesh.freezeWorldMatrix();
             this.sensorsMeshes.push(sensorMesh);
         });
     }
@@ -196,6 +245,7 @@ export class Environment{
         skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         skybox.position = this._scene.activeCamera.position;
+        skyboxMaterial.freeze();
         skybox.material = skyboxMaterial;
     }
 }

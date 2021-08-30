@@ -44,6 +44,8 @@ header .form-group, header .form-check {
   opacity: .8;
   min-width: 300px;
   padding: .5rem 2rem;
+  max-height: 300px;
+  overflow-y: scroll;
 }
 
 #sensorDataDisplayContainer .sensorDataRow {

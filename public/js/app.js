@@ -43,7 +43,26 @@ class App {
     _playbackInterval;
     constructor() {
         window.store = window.store || {};
-        window.store.sensors = sensors_json_1.default;
+        window.store.sensors = [...sensors_json_1.default];
+        // Sensor stress test 
+        let offset = 20;
+        for (let i = 1; i < 10; i++) {
+            let j = 10;
+            sensors_json_1.default.forEach((sensor) => {
+                let sensorCopy = {};
+                Object.assign(sensorCopy, sensor);
+                sensorCopy["position"] = {};
+                Object.assign(sensorCopy.position, sensor.position);
+                Object.assign(sensorCopy.data, sensor.data);
+                sensorCopy.id = (j * i) + "";
+                sensorCopy.name = `sensor_${sensorCopy.id}`;
+                sensorCopy.position.z += (offset * i);
+                //console.log(sensorCopy);
+                window.store.sensors.push(sensorCopy);
+                j++;
+            });
+        }
+        console.log(window.store.sensors);
         // Create the canvas html element and attach it to the webpage
         var container = document.getElementById("canvasContainer");
         this._canvas = document.createElement("canvas");
@@ -53,6 +72,9 @@ class App {
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene = new BABYLON.Scene(this._engine);
         this._environment = new environment_1.Environment(this._scene);
+        // Optimizations
+        this._scene.autoClear = false; // Color buffer
+        this._scene.autoClearDepthAndStencil = false; // Depth and stencil
         // hide/show the Inspector, i
         window.addEventListener("keydown", (ev) => {
             if (ev.keyCode === 73) {

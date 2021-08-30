@@ -36,6 +36,8 @@ header{
     opacity: .8;
     min-width: 300px;
     padding: .5rem 2rem;
+    max-height: 300px;
+    overflow-y: scroll;
 
     .sensorDataRow{
         display: flex;

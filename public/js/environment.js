@@ -49,24 +49,52 @@ class Environment {
         });
     }
     updateSensorLabels(data) {
-        //console.log(data);
         const titleFont = "bold 32px monospace";
         const dataFont = "bold 24px monospace";
+        function randstr() {
+            var result = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+            var charactersLength = characters.length;
+            for (var i = 0; i < 8; i++) {
+                result += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return result;
+        }
+        if (this._sensorLabels.length > 0) {
+            this._sensorLabels.forEach((sensor) => {
+                console.log(sensor);
+                sensor.material.dispose(true, true, null);
+                let labelTexture = new BABYLON.DynamicTexture("dynamic texture", { width: 512, height: 256 }, this._scene, false);
+                // let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:256, height:128}, this._scene, false);    
+                // Change clearColor argument for background color, or set "transparent"
+                labelTexture.drawText(sensor.name, null, null, titleFont, "white", "transparent", true, true);
+                labelTexture.drawText(randstr(), null, 160, dataFont, "white", "transparent", true, true);
+                let labelMaterial = new BABYLON.StandardMaterial("labelMaterial", this._scene);
+                labelMaterial.emissiveColor = new BABYLON.Color3(255, 255, 255);
+                labelMaterial.diffuseTexture = labelTexture;
+                labelMaterial.diffuseTexture.hasAlpha = true;
+                sensor.material = labelMaterial;
+            });
+            return;
+        }
         this.clearSensorLabels();
         window.store.sensors.forEach((sensor) => {
             const sensorData = data.find((d) => d.id === sensor.id);
             const readingValue = sensorData !== undefined ? sensorData.value : "No Value";
             const text = sensor.name;
             let labelTexture = new BABYLON.DynamicTexture("dynamic texture", { width: 512, height: 256 }, this._scene, false);
+            // let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:128, height:128}, this._scene, false);  
             // Change clearColor argument for background color, or set "transparent"
             labelTexture.drawText(text, null, null, titleFont, "white", "transparent", true, true);
             labelTexture.drawText(readingValue, null, 160, dataFont, "white", "transparent", true, true);
+            // labelTexture.drawText(readingValue, null, 100, dataFont, "white", "transparent", true, true);
             let labelMaterial = new BABYLON.StandardMaterial("labelMaterial", this._scene);
             labelMaterial.emissiveColor = new BABYLON.Color3(255, 255, 255);
             labelMaterial.diffuseTexture = labelTexture;
             labelMaterial.diffuseTexture.hasAlpha = true;
             const labelWidth = this._measureTextWidth(text, titleFont) + 10;
             const labelHeight = 200;
+            //const labelHeight = 128;
             let label = BABYLON.MeshBuilder.CreatePlane(`label_${sensor.id}`, { width: labelWidth, height: labelHeight, sideOrientation: BABYLON.Mesh.DOUBLESIDE }, this._scene);
             label.renderingGroupId = 3;
             label.position = new BABYLON.Vector3(sensor.position.x, sensor.position.y + 50, sensor.position.z);
@@ -85,7 +113,9 @@ class Environment {
         return DTWidth;
     }
     clearSensorLabels() {
-        this._sensorLabels.forEach((label) => label.dispose());
+        this._sensorLabels.forEach((label) => {
+            label.dispose(null, true);
+        });
         this._sensorLabels = [];
         this.sensorLabelsVisible = false;
     }
@@ -106,6 +136,7 @@ class Environment {
             m.checkCollisions = true;
             m.renderingGroupId = 2;
         });
+        bridgeMaterial.freeze();
         bridgeImport.meshes[1].material = bridgeMaterial;
         this._bridgeMeshes = bridgeImport.meshes;
         var bridgeMesh = bridgeImport.meshes[0];
@@ -122,7 +153,9 @@ class Environment {
         terrainImport.meshes.forEach(mesh => {
             mesh.renderingGroupId = 2;
         });
+        sceneMaterial.freeze();
         sceneMesh.material = sceneMaterial;
+        sceneMesh.freezeWorldMatrix();
     }
     _createHeatmapPlane() {
         const bridgeMesh = this._bridgeMeshes[0];
@@ -148,16 +181,19 @@ class Environment {
         this.deckMesh.position = new BABYLON.Vector3(bridgeMesh.position.x - deckXoffset, bridgeMesh.position.y - deckYoffset, bridgeMesh.position.z - deckZoffset);
         this.deckMesh.renderingGroupId = 2;
         this.deckMesh.rotation = new BABYLON.Vector3(0, 14 * (Math.PI / 180), 0);
+        this.deckMesh.freezeWorldMatrix();
     }
     _createSensors() {
         var sensorMaterial = new BABYLON.StandardMaterial("sensorMaterial", this._scene);
         sensorMaterial.diffuseColor = new BABYLON.Color3(1, 20 / 255, 147 / 255);
+        sensorMaterial.freeze();
         window.store.sensors.forEach((sensor) => {
             var sensorMesh = BABYLON.MeshBuilder.CreateSphere(sensor.name, { diameter: 5 }, this._scene);
             sensorMesh.position = new BABYLON.Vector3(sensor.position.x, sensor.position.y, sensor.position.z);
             sensorMesh.material = sensorMaterial;
             sensorMesh.renderingGroupId = 2;
             //sensorMesh.showBoundingBox = true;
+            sensorMesh.freezeWorldMatrix();
             this.sensorsMeshes.push(sensorMesh);
         });
     }
@@ -173,6 +209,7 @@ class Environment {
         skyboxMaterial.diffuseColor = new BABYLON.Color3(0, 0, 0);
         skyboxMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         skybox.position = this._scene.activeCamera.position;
+        skyboxMaterial.freeze();
         skybox.material = skyboxMaterial;
     }
 }
