@@ -7,6 +7,10 @@ main{
     position: relative;
 }
 
+#canvasContainer{
+    height: inherit;
+}
+
 header{
     width: 100%;
     display: flex;

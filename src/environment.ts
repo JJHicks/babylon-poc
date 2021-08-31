@@ -43,75 +43,46 @@ export class Environment{
         const titleFont = "bold 32px monospace";
         const dataFont = "bold 24px monospace";
 
-        function randstr() {
-            var result           = '';
-            var characters       = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-            var charactersLength = characters.length;
-            for ( var i = 0; i < 8; i++ ) {
-              result += characters.charAt(Math.floor(Math.random() * charactersLength));
-           }
-           return result;
-        }
-
-        if(this._sensorLabels.length > 0){
-            this._sensorLabels.forEach((sensor: BABYLON.Mesh) => {
-                console.log(sensor);
-                
-                sensor.material.dispose(true, true, null);
-
-                let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:512, height:256}, this._scene, false);                   
-                // let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:256, height:128}, this._scene, false);    
-
-                // Change clearColor argument for background color, or set "transparent"
-                labelTexture.drawText(sensor.name, null, null, titleFont, "white", "transparent", true, true);
-                labelTexture.drawText(randstr(), null, 160, dataFont, "white", "transparent", true, true);
-
-                let labelMaterial = new BABYLON.StandardMaterial("labelMaterial", this._scene);    				
-                labelMaterial.emissiveColor = new BABYLON.Color3(255, 255, 255);
-                labelMaterial.diffuseTexture = labelTexture;
-                labelMaterial.diffuseTexture.hasAlpha = true;
-
-                sensor.material = labelMaterial;
-            });
-            return;
-        }
-        
-
-
-        this.clearSensorLabels();
-
+        this._scene.blockMaterialDirtyMechanism = true;
         window.store.sensors.forEach((sensor: SensorInfo) => {
+
             const sensorData = data.find((d: any) => d.id === sensor.id);
             const readingValue = sensorData !== undefined ? sensorData.value : "No Value";
             const text = sensor.name;
 
-            let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:512, height:256}, this._scene, false);  
-            // let labelTexture = new BABYLON.DynamicTexture("dynamic texture", {width:128, height:128}, this._scene, false);  
+            let labelTexture = new BABYLON.DynamicTexture(`label_${sensor.id}_texture`, {width:512, height:256}, this._scene, false);  
 
             // Change clearColor argument for background color, or set "transparent"
             labelTexture.drawText(text, null, null, titleFont, "white", "transparent", true, true);
             labelTexture.drawText(readingValue, null, 160, dataFont, "white", "transparent", true, true);
-            // labelTexture.drawText(readingValue, null, 100, dataFont, "white", "transparent", true, true);
 
             let labelMaterial = new BABYLON.StandardMaterial("labelMaterial", this._scene);    				
             labelMaterial.emissiveColor = new BABYLON.Color3(255, 255, 255);
             labelMaterial.diffuseTexture = labelTexture;
             labelMaterial.diffuseTexture.hasAlpha = true;
 
-            const labelWidth = this._measureTextWidth(text, titleFont) + 10;
-            const labelHeight = 200; 
-            //const labelHeight = 128;
+            // Update label plane
+            if(this.sensorLabelsVisible){
+                const idStr = `label_${sensor.id}`
+                const sensorMesh = this._sensorLabels.find((sensor: BABYLON.Mesh) => sensor.id === idStr);
+                sensorMesh.material.dispose(true, true, null);
+                sensorMesh.material = labelMaterial;
+            } else { // Create label plane
+                const labelWidth = this._measureTextWidth(text, titleFont) + 10;
+                const labelHeight = 120;
 
-            let label = BABYLON.MeshBuilder.CreatePlane(`label_${sensor.id}`, {width: labelWidth, height: labelHeight, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, this._scene);
-            label.renderingGroupId = 3;
-            label.position = new BABYLON.Vector3(sensor.position.x, sensor.position.y + 50, sensor.position.z);
-            label.material = labelMaterial;
-            label.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
+                let label = BABYLON.MeshBuilder.CreatePlane(`label_${sensor.id}`, {width: labelWidth, height: labelHeight, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, this._scene);
+                label.renderingGroupId = 3;
+                label.position = new BABYLON.Vector3(sensor.position.x, sensor.position.y + 50, sensor.position.z);
+                label.material = labelMaterial;
+                label.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
 
-            this._sensorLabels.push(label);
+                this._sensorLabels.push(label);
+            }
         });
 
         this.sensorLabelsVisible = true;
+        this._scene.blockMaterialDirtyMechanism = false;
     }
 
     private _measureTextWidth(text: string, font: string){
@@ -161,7 +132,7 @@ export class Environment{
         var bridgeMesh = bridgeImport.meshes[0] as BABYLON.Mesh;
         bridgeMesh.scaling.copyFromFloats(0.3, 0.3, 0.3);
         
-        bridgeMesh.rotation = new BABYLON.Vector3(0, 1.462586, 0);
+        bridgeMesh.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(83.8), 0);
         bridgeMesh.position = new BABYLON.Vector3(-80, -50, 105);
     }
 
@@ -200,17 +171,17 @@ export class Environment{
         const deckYoffset = 73;
         const deckZoffset = 90
 
-        const staticDeck = new BABYLON.PolygonMeshBuilder("heatmapPoly", polyCorners, this._scene, earcut.default);
+        const staticDeck = new BABYLON.PolygonMeshBuilder("heatmapBasePoly", polyCorners, this._scene, earcut.default);
         this.deckMesh = staticDeck.build();
         this.deckMesh.position = new BABYLON.Vector3(bridgeMesh.position.x - deckXoffset, bridgeMesh.position.y - deckYoffset, bridgeMesh.position.z - deckZoffset);
         this.deckMesh.renderingGroupId = 2;
-        this.deckMesh.rotation = new BABYLON.Vector3(0, 14 * (Math.PI/180), 0);
+        this.deckMesh.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(14), 0);
 
         const deck = new BABYLON.PolygonMeshBuilder("heatmapPoly", polyCorners, this._scene, earcut.default);
         this.deckMesh = deck.build();
         this.deckMesh.position = new BABYLON.Vector3(bridgeMesh.position.x - deckXoffset, bridgeMesh.position.y - deckYoffset, bridgeMesh.position.z - deckZoffset);
         this.deckMesh.renderingGroupId = 2;           
-        this.deckMesh.rotation = new BABYLON.Vector3(0, 14 * (Math.PI/180), 0);
+        this.deckMesh.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(14), 0);
 
         this.deckMesh.freezeWorldMatrix();
     }
