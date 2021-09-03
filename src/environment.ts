@@ -86,10 +86,10 @@ export class Environment{
     }
 
     private _measureTextWidth(text: string, font: string){
-        var temp = new BABYLON.DynamicTexture("TempDynamicTexture", {width:512, height:256}, this._scene, false);
-        var tmpctx = temp.getContext();
+        let temp = new BABYLON.DynamicTexture("TempDynamicTexture", {width:512, height:256}, this._scene, false);
+        let tmpctx = temp.getContext();
         tmpctx.font = font;
-        var DTWidth = tmpctx.measureText(text).width;
+        let DTWidth = tmpctx.measureText(text).width;
         temp.dispose();
         return DTWidth;
     }
@@ -115,7 +115,7 @@ export class Environment{
         const bridgeImport = await BABYLON.SceneLoader.ImportMeshAsync(null, "../models/McFarlandBridge/", "McFarland Bridge.gltf", this._scene,
         e => console.log("Loading Bridge..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
 
-        var bridgeMaterial = new BABYLON.StandardMaterial("bridgeSurface", this._scene);
+        let bridgeMaterial = new BABYLON.StandardMaterial("bridgeSurface", this._scene);
         bridgeMaterial.diffuseColor = new BABYLON.Color3(.617, .105, .195);
 
         bridgeImport.meshes.forEach(m => {
@@ -129,7 +129,7 @@ export class Environment{
 
         this._bridgeMeshes = bridgeImport.meshes;     
 
-        var bridgeMesh = bridgeImport.meshes[0] as BABYLON.Mesh;
+        let bridgeMesh = bridgeImport.meshes[0] as BABYLON.Mesh;
         bridgeMesh.scaling.copyFromFloats(0.3, 0.3, 0.3);
         
         bridgeMesh.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(83.8), 0);
@@ -140,10 +140,10 @@ export class Environment{
         const terrainImport = await BABYLON.SceneLoader.ImportMeshAsync(null, "../models/scene/terrain/", "BridgeTerrainBuildings.gltf", this._scene,
         e => console.log("Loading Scene..." + Math.trunc((e.loaded / e.total) * 100) + "%"));
 
-        var sceneMaterial = new BABYLON.StandardMaterial("scene", this._scene);
+        let sceneMaterial = new BABYLON.StandardMaterial("scene", this._scene);
         sceneMaterial.diffuseColor = new BABYLON.Color3(1, 1, 0);
 
-        var sceneMesh = terrainImport.meshes[0] as BABYLON.Mesh;
+        let sceneMesh = terrainImport.meshes[0] as BABYLON.Mesh;
         sceneMesh.scaling.copyFromFloats(12, 12, 12);
 
         terrainImport.meshes.forEach(mesh => {
@@ -187,12 +187,12 @@ export class Environment{
     }
 
     private _createSensors(){
-        var sensorMaterial = new BABYLON.StandardMaterial("sensorMaterial", this._scene);
+        let sensorMaterial = new BABYLON.StandardMaterial("sensorMaterial", this._scene);
         sensorMaterial.diffuseColor = new BABYLON.Color3(1, 20/255, 147/255);
         sensorMaterial.freeze();
 
         window.store.sensors.forEach((sensor: SensorInfo) => {
-            var sensorMesh: BABYLON.Mesh = BABYLON.MeshBuilder.CreateSphere(sensor.name, { diameter: 5 }, this._scene);
+            let sensorMesh: BABYLON.Mesh = BABYLON.MeshBuilder.CreateSphere(sensor.name, { diameter: 5 }, this._scene);
 
             sensorMesh.position = new BABYLON.Vector3(sensor.position.x, sensor.position.y, sensor.position.z);
             sensorMesh.material = sensorMaterial;
@@ -204,7 +204,7 @@ export class Environment{
     }
 
     private _createLights(){
-        var light1: BABYLON.HemisphericLight = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), this._scene);
+        let light1: BABYLON.HemisphericLight = new BABYLON.HemisphericLight("light1", new BABYLON.Vector3(1, 1, 0), this._scene);
     }
 
     private _createSkyBox(){

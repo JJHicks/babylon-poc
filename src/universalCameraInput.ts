@@ -30,8 +30,8 @@ export class UniversalCameraInput implements ICameraInput<FreeCamera>{
     //this function must activate your input, event if your input does not need a DOM element
     public attachControl(noPreventDefault?: boolean): void{
         this._noPreventDefault = noPreventDefault ?? false;
-        var engine = this.camera.getEngine();
-        var element = engine.getInputElement();
+        let engine = this.camera.getEngine();
+        let element = engine.getInputElement();
 
         if (!this._onKeyDown) {
 
@@ -45,8 +45,8 @@ export class UniversalCameraInput implements ICameraInput<FreeCamera>{
 
     //detach control must deactivate your input and release all pointers, closures or event listeners
     public detachControl(): void{
-        var engine = this.camera.getEngine();
-        var element = engine.getInputElement();
+        let engine = this.camera.getEngine();
+        let element = engine.getInputElement();
         if (this._onKeyDown) {
           element.removeEventListener("keydown", this._onKeyDown);
           element.removeEventListener("keyup", this._onKeyUp);
@@ -61,10 +61,10 @@ export class UniversalCameraInput implements ICameraInput<FreeCamera>{
     //no need to use requestAnimationFrame. It's a good place for applying calculations if you have to
     public checkInputs(): void{
         if (this._onKeyDown) {
-            var camera = this.camera;
+            let camera = this.camera;
             // Keyboard
-            for (var index = 0; index < this._keys.length; index++) {
-              var keyCode = this._keys[index];
+            for (let index = 0; index < this._keys.length; index++) {
+              let keyCode = this._keys[index];
               if (this._keysLeft.indexOf(keyCode) !== -1) {
                 camera.cameraRotation.y += this._sensibility;
               } else if (this._keysRight.indexOf(keyCode) !== -1) {
@@ -80,7 +80,7 @@ export class UniversalCameraInput implements ICameraInput<FreeCamera>{
 
     private _onKeyDown(evt : KeyboardEvent){
         if (this._keysLeft.indexOf(evt.keyCode) !== -1 || this._keysRight.indexOf(evt.keyCode) !== -1) {
-            var index = this._keys.indexOf(evt.keyCode);
+            let index = this._keys.indexOf(evt.keyCode);
             if (index === -1) {
                 this._keys.push(evt.keyCode);
             }
@@ -92,7 +92,7 @@ export class UniversalCameraInput implements ICameraInput<FreeCamera>{
 
     private _onKeyUp(evt: KeyboardEvent){
         if (this._keysLeft.indexOf(evt.keyCode) !== -1 || this._keysRight.indexOf(evt.keyCode) !== -1) {
-            var index = this._keys.indexOf(evt.keyCode);
+            let index = this._keys.indexOf(evt.keyCode);
             if (index >= 0) {
                 this._keys.splice(index, 1);
             }

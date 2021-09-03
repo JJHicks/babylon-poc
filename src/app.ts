@@ -9,7 +9,6 @@ import sensors from "./data/sensors.json";
 import { SensorInfo, SensorData } from "./interfaces/sensorInfo";
 import convertValuesToHeatmap from "./helpers/ValuesToHeatmap";
 import { DateTime } from "luxon";
-import { SwitchBooleanAction } from "babylonjs/Actions/directActions";
 
 class App {
 
@@ -53,7 +52,7 @@ class App {
         console.log(window.store.sensors);
 
         // Create the canvas html element and attach it to the webpage
-        var container = document.getElementById("canvasContainer");
+        let container = document.getElementById("canvasContainer");
         this._canvas = document.createElement("canvas");
         this._canvas.id = "renderCanvas";
         container.appendChild(this._canvas);
@@ -110,8 +109,6 @@ class App {
         //     api.getSensorData().then(res => console.log(res));
         // });
 
-        //document.getElementById("changeHeatmap").addEventListener("click", e => this._updateHeatmap());
-
         document.getElementById("timeSelect").addEventListener("input", e => {
             if(this._playbackInterval !== undefined){
                 this._togglePlayback();
@@ -125,7 +122,6 @@ class App {
         document.getElementById("playbackIcon").addEventListener("click", e => this._togglePlayback());
         document.getElementById("showSensorLabels").addEventListener("change", e => this._toggleSensorLabels());
 
-
         window.addEventListener("resize", () => {
             this._canvas.width = window.innerWidth;
             this._canvas.height = window.innerHeight;
@@ -133,11 +129,11 @@ class App {
         });
 
         this._scene.onPointerDown = (evt, pickResult) => {
-            var results = this._scene.multiPick(this._scene.unTranslatedPointer.x, this._scene.unTranslatedPointer.y);
+            let results = this._scene.multiPick(this._scene.unTranslatedPointer.x, this._scene.unTranslatedPointer.y);
             //console.log(pickResult);
             //console.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
 
-            var firstSensorHitByRay = results.find(info => info.pickedMesh.name.includes("sensor_"));
+            let firstSensorHitByRay = results.find(info => info.pickedMesh.name.includes("sensor_"));
 
             if(firstSensorHitByRay){
                 const sensor = window.store.sensors.find((s: SensorInfo) => s.name === firstSensorHitByRay.pickedMesh.name);
@@ -305,7 +301,7 @@ class App {
         
         this._environment.deckMesh.material?.dispose();
 
-        var texture = new BABYLON.RawTexture(
+        let texture = new BABYLON.RawTexture(
             new Uint8Array(textureData),
             4,
             2,
@@ -316,11 +312,11 @@ class App {
             BABYLON.Texture.TRILINEAR_SAMPLINGMODE
         );
 
-        var heatmapMaterial = new BABYLON.StandardMaterial("heatmapMaterial", this._scene);
+        let heatmapMaterial = new BABYLON.StandardMaterial("heatmapMaterial", this._scene);
         heatmapMaterial.diffuseTexture = texture;
         heatmapMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
-        //var animation = new BABYLON.Animation("heatmapAnimation", "material.texture", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+        //let animation = new BABYLON.Animation("heatmapAnimation", "material.texture", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
         this._environment.deckMesh.material = heatmapMaterial;
         this._adjustDeckHeatmapAlpha();
