@@ -1,0 +1,15 @@
+{
+  "compilerOptions": {
+    "rootDir": "."
+  },
+  "extends": "./tsconfig",
+  "include": ["./**/*"],
+  "exclude": ["node_modules/**/*", "**/*.spec.ts"],
+  "outDir": "public/js",
+  "types": [
+    "babylonjs",
+    "babylonjs-gui",
+    "babylonjs-loaders",
+    // "babylonjs-materials"
+  ],
+}

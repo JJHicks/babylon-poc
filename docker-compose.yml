@@ -1,8 +1,9 @@
 version: "3.9"
 services: 
-  server:
-    build: .
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: nginx
     ports: 
       - 8080:80
-    command: npm build

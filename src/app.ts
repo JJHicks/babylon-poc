@@ -49,7 +49,7 @@ class App {
 
         }
 
-        console.log(window.store.sensors);
+        //console.log(window.store.sensors);
 
         // Create the canvas html element and attach it to the webpage
         let container = document.getElementById("canvasContainer");
