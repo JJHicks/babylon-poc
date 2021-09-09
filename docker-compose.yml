@@ -1,9 +1,9 @@
 version: "3.9"
 services: 
   frontend:
+    image: bridge_frontend
     build:
       context: .
       dockerfile: Dockerfile
-    image: nginx
     ports: 
       - 8080:80

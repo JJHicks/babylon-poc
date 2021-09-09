@@ -1,17 +1,14 @@
-# FROM nginx:alpine
-# COPY ./public/ /usr/share/nginx/html
-
 FROM nginx:alpine
 WORKDIR /usr/share/nginx/html
 RUN rm -rf ./*
 COPY ./public/ ./
 
-COPY ./public build
+RUN mkdir /usr/src
+COPY ./public/index.html /usr/src
 
-# WORKDIR /usr
-# COPY ./src src 
-COPY ./src ./src
-WORKDIR /usr/share/nginx/html/src
+WORKDIR /usr/src
+COPY ./src . 
+
 COPY package.json .
 COPY webpack.common.js .
 COPY webpack.prod.js .
@@ -22,6 +19,7 @@ LABEL name="Bridge"
 
 RUN apk add --update nodejs npm
 RUN npm install --no-package-lock && npm run build && npm prune --production
+RUN rm -r node_modules/*
 
 WORKDIR /usr/share/nginx/html
 

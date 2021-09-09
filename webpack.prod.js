@@ -13,7 +13,8 @@ module.exports = merge(common, {
         index: path.resolve(appDirectory, "app.ts")
     },
     output: {
-        path: path.resolve(appDirectory, "../build"),
+        //path: path.resolve(appDirectory, "../build"),
+        path: path.resolve(appDirectory, "../share/nginx/html"),
         filename: "js/bundle.js", 
         // publicPath: "/"
     },
@@ -39,11 +40,7 @@ module.exports = merge(common, {
             },
             {
                 test: /\.tsx?$/,
-                //use: "ts-loader",
                 exclude: /node_modules/,
-                // options: {
-                //     configFile: "tsconfig.prod.json"
-                // }
                 use: [
                     {
                         loader: "ts-loader",
@@ -80,11 +77,8 @@ module.exports = merge(common, {
     plugins: [
         new HtmlWebpackPlugin({
             inject: true,
-            //filename: "index.html",
             title: "Bridge",
-            //template: path.resolve(appDirectory, "./index.html"),
-            template: "../index.html",
-            // publicPath: "/"
+            template: "index.html"
         }),
         new MiniCssExtractPlugin({
             filename: "[name].css",
