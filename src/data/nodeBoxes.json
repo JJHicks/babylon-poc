@@ -1,0 +1,38 @@
+[
+    {
+        "id": "Datalogger",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "channelQty": 20
+    },
+    {
+        "id": "Node Box 1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "channelQty": 16
+    },
+    {
+        "id": "Node Box 2",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "channelQty": 12
+    },
+    {
+        "id": "Node Box 1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "channelQty": 24
+    }
+]

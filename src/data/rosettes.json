@@ -1,0 +1,380 @@
+[
+    {
+        "id": "FB15_G0102_SR_1 (H)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "CB4-5",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB15_G0102_SR_1 (D)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "CB4-5",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB15_G0102_SR_1 (V)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "CB4-5",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB15_G0102_SR_2 (H)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 2,
+        "channelQTY": 1,
+        "auxBox": "CB4-6",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB15_G0102_SR_2 (D)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 2,
+        "channelQTY": 1,
+        "auxBox": "CB4-6",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB15_G0102_SR_2 (V)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 2,
+        "channelQTY": 1,
+        "auxBox": "CB4-6",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB1500_SR_1 (H)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-7",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB1500_SR_1 (D)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-7",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB1500_SR_1 (V)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-7",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0102_SR_1 (H)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 3,
+        "channelQTY": 1,
+        "auxBox": "CB4-2",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0102_SR_1 (D)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 3,
+        "channelQTY": 1,
+        "auxBox": "CB4-2",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0102_SR_1 (V)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 3,
+        "channelQTY": 1,
+        "auxBox": "CB4-2",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0102_SR_2 (H)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 4,
+        "channelQTY": 1,
+        "auxBox": "CB4-3",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0102_SR_2 (D)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 4,
+        "channelQTY": 1,
+        "auxBox": "CB4-3",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0102_SR_2 (V)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 4,
+        "channelQTY": 1,
+        "auxBox": "CB4-3",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB0100_SR_1 (H)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-4",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB0100_SR_1 (D)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-4",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB0100_SR_1 (V)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-4",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0607_SR_1 (H)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 5,
+        "channelQTY": 1,
+        "auxBox": "CB4-9",
+        "mappedTo": "Node Box 3",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0607_SR_1 (D)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 5,
+        "channelQTY": 1,
+        "auxBox": "CB4-9",
+        "mappedTo": "Node Box 3",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0607_SR_1 (V)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 5,
+        "channelQTY": 1,
+        "auxBox": "CB4-9",
+        "mappedTo": "Node Box 3",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0607_SR_2 (H)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 6,
+        "channelQTY": 1,
+        "auxBox": "CB4-10",
+        "mappedTo": "Node Box 3",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0607_SR_2 (D)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 6,
+        "channelQTY": 1,
+        "auxBox": "CB4-10",
+        "mappedTo": "Node Box 3",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "FB01_G0607_SR_2 (V)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 6,
+        "channelQTY": 1,
+        "auxBox": "CB4-10",
+        "mappedTo": "Node Box 3",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G07_FB0100_SR_1 (H)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-11",
+        "mappedTo": "Node Box 3",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G07_FB0100_SR_1 (D)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-11",
+        "mappedTo": "Node Box 3",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G07_FB0100_SR_1 (V)",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-11",
+        "mappedTo": "Node Box 3",
+        "data" : [],
+        "textureOrder": 0
+    }
+]

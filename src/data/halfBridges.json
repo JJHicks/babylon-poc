@@ -1,0 +1,156 @@
+[
+    {
+        "id": "G01_FB1112_SG_1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "AC350-2",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB1500_SG_1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-5",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB1500_SG_2",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 1,
+        "auxBox": "CB4-6",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "A6_FB0100_SG_1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "CB4-1",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB0100_SG_1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "CB4-1",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB0100_SG_2",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "CB4-2",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G01_FB0405_SG_1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "AC350-5",
+        "mappedTo": "Node Box 1",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G04_FB0405_SG_1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "CB4-8",
+        "mappedTo": "Node Box 2",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "S_G04_FB0607_SG_1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "AC350-7",
+        "mappedTo": "Node Box 2",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G04_FB0708_SG_3",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "CB4-8",
+        "mappedTo": "Node Box 2",
+        "data" : [],
+        "textureOrder": 0
+    },
+    {
+        "id": "G04_FB1112_SG_1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 1,
+        "channelQTY": 1,
+        "auxBox": "AC350-9",
+        "mappedTo": "Node Box 2",
+        "data" : [],
+        "textureOrder": 0
+    }
+]

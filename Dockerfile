@@ -24,3 +24,6 @@ RUN rm -r node_modules/*
 WORKDIR /usr/share/nginx/html
 
 ENV NODE_ENV production
+
+EXPOSE 80
+EXPOSE 8080

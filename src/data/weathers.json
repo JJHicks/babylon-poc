@@ -1,0 +1,16 @@
+[
+    {
+        "id": "Digital Weather Station",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "QTYTakeOff": 0,
+        "channelQTY": 0,
+        "auxBox": "N/A",
+        "mappedTo": "Datalogger",
+        "data" : [],
+        "textureOrder": 0
+    }
+]

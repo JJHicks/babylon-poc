@@ -1,0 +1,191 @@
+[    
+    {
+        "id": "AC350-1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Datalogger"
+    },
+    {
+        "id": "CB4-7",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Datalogger"
+    },
+    {
+        "id": "CB4-5",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Datalogger"
+    },
+    {
+        "id": "CB4-6",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Datalogger"
+    },
+    {
+        "id": "AC350-2",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Datalogger"
+    },
+    {
+        "id": "CB4-1",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 1"
+    },
+    {
+        "id": "CB4-2",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 1"
+    },
+    {
+        "id": "CB4-3",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 1"
+    },
+    {
+        "id": "AC350-4",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 1"
+    },
+    {
+        "id": "AC350-5",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 1"
+    },
+    {
+        "id": "CB4-8",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 2"
+    },
+    {
+        "id": "AC350-6",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 2"
+    },
+    {
+        "id": "AC350-7",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 2"
+    },
+    {
+        "id": "AC350-8",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 2"
+    },
+    {
+        "id": "AC350-9",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 2"
+    },
+    {
+        "id": "CB4-9",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 3"
+    },
+    {
+        "id": "CB4-10",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 3"
+    },
+    {
+        "id": "CB4-11",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 3"
+    },
+    {
+        "id": "AC350-10",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 3"
+    },
+    {
+        "id": "AC350-11",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 3"
+    },
+    {
+        "id": "AC350-13",
+        "position": {
+            "x": 0,
+            "y": 0,
+            "z": 0
+        },
+        "mappedTo": "Node Box 3"
+    }
+]
