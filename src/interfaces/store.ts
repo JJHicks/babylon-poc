@@ -9,8 +9,10 @@ export interface Store {
 
 export interface TimeDataSet{
     time: DateTime,
-    data: Array<{
-        id: string,
-        value: number
-    }>
+    data: DataPoint[]
+}
+
+export interface DataPoint{
+    id: string,
+    value: number
 }

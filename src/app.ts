@@ -19,6 +19,7 @@ import _quarterBridges from "./data/quarterBridges.json";
 import _rosettes from "./data/rosettes.json";
 import _thermistors from "./data/thermistors.json";
 import _weathers from "./data/weathers.json";
+import { HeatmapManager } from "./heatmapManager";
 
 class App {
 
@@ -33,6 +34,7 @@ class App {
 
     private _playbackInterval: number;
     private _sensorManager: SensorManager;
+    private _heatmapManager: HeatmapManager;
 
     constructor() {
 
@@ -90,8 +92,10 @@ class App {
         this._sensorManager = SensorManager.getInstance();
         this._sensorManager.scene = this._scene;
 
-        this._generateFalseSensorData();
+        this._heatmapManager = HeatmapManager.getInstance();
+        this._heatmapManager.scene = this._scene;
 
+        this._generateFalseSensorData();
     }
 
     private _addEvents(){
@@ -109,9 +113,9 @@ class App {
 
         document.getElementById("sensorsInFront").addEventListener("change", e => this._sensorManager.setAllSensorsVisible((e.target as HTMLInputElement).checked));
         document.getElementById("date").addEventListener("change", e => this._generateFalseSensorData());
-        document.getElementById("showHeatmap").addEventListener("change", e => this._environment.adjustDeckHeatmapAlpha());
+        document.getElementById("showHeatmap").addEventListener("change", e => this._heatmapManager.adjustDeckHeatmapAlpha());
         // document.getElementById("showSensorData").addEventListener("change", e => this._toggleShowSensorData());
-        document.getElementById("heatmapOpacity").addEventListener("input", e => this._environment.adjustDeckHeatmapAlpha());
+        document.getElementById("heatmapOpacity").addEventListener("input", e => this._heatmapManager.adjustDeckHeatmapAlpha());
         document.getElementById("playbackIcon").addEventListener("click", e => this._togglePlayback());
 
         const labelCheckboxes = document.getElementsByClassName("label-toggle");
@@ -149,9 +153,9 @@ class App {
 
         const dateTimeSelected = DateTime.fromISO(window.store.timesShown[val]);
         window.store.activeDataset = window.store.timeData.find((data: TimeDataSet) => data.time.equals(dateTimeSelected));
-        
+
         this._sensorManager.updateAllShownLabels();
-        this._environment.updateHeatmap();
+        this._heatmapManager.updateHeatmap();
     }
 
     // private _initSensorDataDisplay(){
@@ -248,7 +252,7 @@ class App {
 
         window.store.activeDataset = window.store.timeData[0];
 
-        this._environment.updateHeatmap();
+        this._heatmapManager.updateHeatmap();
         this._sensorManager.updateAllShownLabels();
     }
 

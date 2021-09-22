@@ -7,5 +7,5 @@ export interface SensorMetadata {
     channelQTY: number,
     auxBox: string,
     mappedTo: string,
-    textureOrder?: number
+    heatmapSector?: number
 }

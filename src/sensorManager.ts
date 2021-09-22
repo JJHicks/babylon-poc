@@ -25,6 +25,14 @@ export class SensorManager{
         
     }
 
+    public getGageGroup(groupName: string){
+        const group = this._entities.gageGroups.find(g => g.name === groupName);
+        if(group === undefined)
+            throw new Error("Gage group not found.");
+            
+        return [...group.objects];
+    }
+
     static getInstance(){
         if(!SensorManager._instance){
             SensorManager._instance = new SensorManager();
