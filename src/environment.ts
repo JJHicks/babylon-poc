@@ -10,12 +10,12 @@ import { api } from "./api/api";
 import convertValuesToHeatmap from "./helpers/ValuesToHeatmap";
 import { SensorInfo } from "./interfaces/sensorInfo";
 import * as GUI from "babylonjs-gui";
+import { DateTime } from "luxon";
 
 export class Environment{
 
     private _scene: BABYLON.Scene;
     private _bridgeMeshes: BABYLON.AbstractMesh[];
-    private _sensorLabels: BABYLON.Mesh[];
 
     public deckMesh: BABYLON.Mesh;
     public sensorsMeshes: BABYLON.Mesh[];
@@ -23,92 +23,69 @@ export class Environment{
 
     constructor(scene: BABYLON.Scene) {
         this.sensorsMeshes = [];
-        this._sensorLabels = [];
         this._scene = scene;       
     }
 
     public async load() {
         await this._loadAssets();
     }
-
-    public setAllSensorsVisible(visible: boolean){
-        const group = visible ? 3 : 2;
-        this.sensorsMeshes.forEach(s => {
-            s.renderingGroupId = group;
-        });
-    }
-
-    public updateSensorLabels(data: any[]){
-
-        const titleFont = "bold 32px monospace";
-        const dataFont = "bold 24px monospace";
-
-        this._scene.blockMaterialDirtyMechanism = true;
-        window.store.sensors.forEach((sensor: SensorInfo) => {
-
-            const sensorData = data.find((d: any) => d.id === sensor.id);
-            const readingValue = sensorData !== undefined ? sensorData.value : "No Value";
-            const text = sensor.name;
-
-            let labelTexture = new BABYLON.DynamicTexture(`label_${sensor.id}_texture`, {width:512, height:256}, this._scene, false);  
-
-            // Change clearColor argument for background color, or set "transparent"
-            labelTexture.drawText(text, null, null, titleFont, "white", "transparent", true, true);
-            labelTexture.drawText(readingValue, null, 160, dataFont, "white", "transparent", true, true);
-
-            let labelMaterial = new BABYLON.StandardMaterial("labelMaterial", this._scene);    				
-            labelMaterial.emissiveColor = new BABYLON.Color3(255, 255, 255);
-            labelMaterial.diffuseTexture = labelTexture;
-            labelMaterial.diffuseTexture.hasAlpha = true;
-
-            // Update label plane
-            if(this.sensorLabelsVisible){
-                const idStr = `label_${sensor.id}`
-                const sensorMesh = this._sensorLabels.find((sensor: BABYLON.Mesh) => sensor.id === idStr);
-                sensorMesh.material.dispose(true, true, null);
-                sensorMesh.material = labelMaterial;
-            } else { // Create label plane
-                const labelWidth = this._measureTextWidth(text, titleFont) + 10;
-                const labelHeight = 120;
-
-                let label = BABYLON.MeshBuilder.CreatePlane(`label_${sensor.id}`, {width: labelWidth, height: labelHeight, sideOrientation: BABYLON.Mesh.DOUBLESIDE}, this._scene);
-                label.renderingGroupId = 3;
-                label.position = new BABYLON.Vector3(sensor.position.x, sensor.position.y + 50, sensor.position.z);
-                label.material = labelMaterial;
-                label.billboardMode = BABYLON.Mesh.BILLBOARDMODE_ALL;
-
-                this._sensorLabels.push(label);
-            }
-        });
-
-        this.sensorLabelsVisible = true;
-        this._scene.blockMaterialDirtyMechanism = false;
-    }
-
-    private _measureTextWidth(text: string, font: string){
-        let temp = new BABYLON.DynamicTexture("TempDynamicTexture", {width:512, height:256}, this._scene, false);
-        let tmpctx = temp.getContext();
-        tmpctx.font = font;
-        let DTWidth = tmpctx.measureText(text).width;
-        temp.dispose();
-        return DTWidth;
-    }
-
-    public clearSensorLabels(){
-        this._sensorLabels.forEach((label: BABYLON.Mesh) => {
-            label.dispose(null, true);
-        });
-        this._sensorLabels = [];
-        this.sensorLabelsVisible = false;
-    }
-
+    
     private async _loadAssets() {
         this._createSkyBox();
         this._createLights();
         await this._createTerrain();
         await this._createBridge();
-        this._createSensors();
         this._createHeatmapPlane();        
+    }
+
+    public updateHeatmap(){
+
+        // this._updateSensorDataDisplay();
+
+        const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
+        const time = window.store.timesShown[timeSliderValue];
+        const dateTimeSelected = DateTime.fromISO(time);
+
+        // const textureOrderedSensors = window.store.sensors.map((s: SensorInfo) => ({...s})).sort((a: SensorInfo, b: SensorInfo) => a.textureOrder - b.textureOrder);
+
+        // let textureData: any[] = [];
+
+        // textureOrderedSensors.map((s: SensorInfo) => {
+        //     const data = s.data.find((d: SensorData) => d.datetime.equals(dateTimeSelected));
+        //     try{
+        //         textureData.push(...convertValuesToHeatmap(0, 100, data !== undefined ? data.value : 0));
+        //     } catch (e) {
+        //         console.error(e);
+        //     }
+        // });
+        
+        // this._environment.deckMesh.material?.dispose();
+
+        // let texture = new BABYLON.RawTexture(
+        //     new Uint8Array(textureData),
+        //     4,
+        //     2,
+        //     BABYLON.Engine.TEXTUREFORMAT_RGB,
+        //     this._scene,
+        //     false,
+        //     false,
+        //     BABYLON.Texture.TRILINEAR_SAMPLINGMODE
+        // );
+
+        // let heatmapMaterial = new BABYLON.StandardMaterial("heatmapMaterial", this._scene);
+        // heatmapMaterial.diffuseTexture = texture;
+        // heatmapMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
+
+        // //let animation = new BABYLON.Animation("heatmapAnimation", "material.texture", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
+
+        // this.deckMesh.material = heatmapMaterial;
+        // this.adjustDeckHeatmapAlpha();
+    }
+
+    public adjustDeckHeatmapAlpha(){
+        const show = (document.getElementById("showHeatmap") as HTMLInputElement).checked ? 1 : 0;
+        const alphaValue = parseFloat((document.getElementById("heatmapOpacity") as HTMLInputElement).value);
+        this.deckMesh.material.alpha = Math.min(show, alphaValue);
     }
 
     private async _createBridge(){
@@ -184,23 +161,6 @@ export class Environment{
         this.deckMesh.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(14), 0);
 
         this.deckMesh.freezeWorldMatrix();
-    }
-
-    private _createSensors(){
-        let sensorMaterial = new BABYLON.StandardMaterial("sensorMaterial", this._scene);
-        sensorMaterial.diffuseColor = new BABYLON.Color3(1, 20/255, 147/255);
-        sensorMaterial.freeze();
-
-        window.store.sensors.forEach((sensor: SensorInfo) => {
-            let sensorMesh: BABYLON.Mesh = BABYLON.MeshBuilder.CreateSphere(sensor.name, { diameter: 5 }, this._scene);
-
-            sensorMesh.position = new BABYLON.Vector3(sensor.position.x, sensor.position.y, sensor.position.z);
-            sensorMesh.material = sensorMaterial;
-            sensorMesh.renderingGroupId = 2;
-            //sensorMesh.showBoundingBox = true;
-            sensorMesh.freezeWorldMatrix();
-            this.sensorsMeshes.push(sensorMesh);
-        });
     }
 
     private _createLights(){

@@ -5,16 +5,25 @@ import * as BABYLON from "babylonjs";
 import { Environment } from "./environment";
 import * as GUI from "babylonjs-gui";
 import { api } from "./api/api";
-import sensors from "./data/sensors.json";
 import { SensorInfo, SensorData } from "./interfaces/sensorInfo";
 import convertValuesToHeatmap from "./helpers/ValuesToHeatmap";
 import { DateTime } from "luxon";
+import { TimeDataSet } from "./interfaces/store";
+
+import { SensorManager } from "./sensorManager";
+
+// Temp imports for fake data
+import _accelerometers from "./data/accelerometers.json";
+import _halfBridges from "./data/halfBridges.json";
+import _quarterBridges from "./data/quarterBridges.json";
+import _rosettes from "./data/rosettes.json";
+import _thermistors from "./data/thermistors.json";
+import _weathers from "./data/weathers.json";
 
 class App {
 
     private _scene: BABYLON.Scene;
     private _universalCamera: BABYLON.UniversalCamera;
-    //private _fpCamera: BABYLON.
     private _canvas: HTMLCanvasElement;
     private _engine: BABYLON.Engine;
     private _environment: Environment;
@@ -23,33 +32,15 @@ class App {
     private _infoDisplayTextBlock: GUI.TextBlock;
 
     private _playbackInterval: number;
+    private _sensorManager: SensorManager;
 
     constructor() {
 
-        window.store = window.store || {};
-        window.store.sensors = [...sensors];
-
-        // Sensor stress test 
-        let offset = 20;
-        for(let i = 1; i < 10; i++){
-            let j = 10;
-            sensors.forEach((sensor: any) => {
-                let sensorCopy: any = {};
-                Object.assign(sensorCopy, sensor);
-                sensorCopy["position"] = {};
-                Object.assign(sensorCopy.position, sensor.position);
-                Object.assign(sensorCopy.data, sensor.data);
-                sensorCopy.id = (j*i) + "";
-                sensorCopy.name = `sensor_${sensorCopy.id}`;
-                sensorCopy.position.z += (offset * i);
-                //console.log(sensorCopy);
-                window.store.sensors.push(sensorCopy);
-                j++;
-            });       
-
-        }
-
-        //console.log(window.store.sensors);
+        window.store = {
+            activeDataset: null,
+            timeData: [],
+            timesShown: []
+        };
 
         // Create the canvas html element and attach it to the webpage
         let container = document.getElementById("canvasContainer");
@@ -92,18 +83,18 @@ class App {
         this._addEvents();
         // Babylon GUI
         this._initInfoDisplay();
-        this._generateFalseSensorData();
+
         // HTML Overlay
-        this._initSensorDataDisplay();
+        // this._initSensorDataDisplay();
+
+        this._sensorManager = SensorManager.getInstance();
+        this._sensorManager.scene = this._scene;
+
+        this._generateFalseSensorData();
+
     }
 
     private _addEvents(){
-
-        document.getElementById("sensorsInFront").addEventListener("change", e => {
-            this._environment.setAllSensorsVisible((e.target as HTMLInputElement).checked)
-        });
-
-        document.getElementById("date").addEventListener("change", e => this._generateFalseSensorData());
 
         // document.getElementById("showHeatmap").addEventListener("change", e => {
         //     api.getSensorData().then(res => console.log(res));
@@ -116,11 +107,20 @@ class App {
             this._handleTimeChange();
         });
 
-        document.getElementById("showHeatmap").addEventListener("change", e => this._adjustDeckHeatmapAlpha());
-        document.getElementById("showSensorData").addEventListener("change", e => this._toggleShowSensorData());
-        document.getElementById("heatmapOpacity").addEventListener("input", e => this._adjustDeckHeatmapAlpha());
+        document.getElementById("sensorsInFront").addEventListener("change", e => this._sensorManager.setAllSensorsVisible((e.target as HTMLInputElement).checked));
+        document.getElementById("date").addEventListener("change", e => this._generateFalseSensorData());
+        document.getElementById("showHeatmap").addEventListener("change", e => this._environment.adjustDeckHeatmapAlpha());
+        // document.getElementById("showSensorData").addEventListener("change", e => this._toggleShowSensorData());
+        document.getElementById("heatmapOpacity").addEventListener("input", e => this._environment.adjustDeckHeatmapAlpha());
         document.getElementById("playbackIcon").addEventListener("click", e => this._togglePlayback());
-        document.getElementById("showSensorLabels").addEventListener("change", e => this._toggleSensorLabels());
+
+        const labelCheckboxes = document.getElementsByClassName("label-toggle");
+        for(let i = 0; i < labelCheckboxes.length; i++){
+            labelCheckboxes[i].addEventListener("click", e => {
+                const el = e.target as HTMLInputElement;
+                this._sensorManager.updateLabels(el.dataset.type, el.checked);
+            });
+        }
 
         window.addEventListener("resize", () => {
             this._canvas.width = window.innerWidth;
@@ -143,77 +143,57 @@ class App {
         }
     }
     
-    private _toggleSensorLabels(){
-        const show = (document.getElementById("showSensorLabels") as HTMLInputElement).checked;
-
-        if(show){
-            this._updateSensorLabels();
-            return;
-        } 
-        
-        this._environment.clearSensorLabels();
-    }
-
-    private _updateSensorLabels(){
-        const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
-        const time = window.store.timesShown[timeSliderValue];
-        const dateTimeSelected = DateTime.fromISO(time);
-
-        let data: any[] = [];
-
-        window.store.sensors.forEach((sensor: SensorInfo) => {
-            const timeData = sensor.data.find((d: SensorData) => d.datetime.equals(dateTimeSelected));
-            data.push({ id: sensor.id, value: timeData !== undefined ? timeData.value.toFixed(5).toString() : "- No Value" })
-        });
-        this._environment.updateSensorLabels(data);
-    }
-
     private _handleTimeChange(){
         const val = (document.getElementById("timeSelect") as HTMLInputElement).value;
         document.getElementById("timeDisplay").innerText = (window.store.timesShown[val] as DateTime).toLocaleString(DateTime.DATETIME_SHORT);
-        this._updateHeatmap();
+
+        const dateTimeSelected = DateTime.fromISO(window.store.timesShown[val]);
+        window.store.activeDataset = window.store.timeData.find((data: TimeDataSet) => data.time.equals(dateTimeSelected));
+        
+        this._sensorManager.updateAllShownLabels();
+        this._environment.updateHeatmap();
     }
 
-    private _initSensorDataDisplay(){
-        const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLElement;
+    // private _initSensorDataDisplay(){
+    //     const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLElement;
 
-        let rows = displayContainer.getElementsByClassName(".sensorRowData");
-        while(rows[0]) rows[0].parentNode.removeChild(rows[0]);
+    //     let rows = displayContainer.getElementsByClassName(".sensorRowData");
+    //     while(rows[0]) rows[0].parentNode.removeChild(rows[0]);
 
-        const template = document.getElementById("sensorDataDisplayRowTemplate") as HTMLTemplateElement;
-        window.store.sensors.forEach((sensor: SensorInfo) => {
+    //     const template = document.getElementById("sensorDataDisplayRowTemplate") as HTMLTemplateElement;
+    //     window.store.sensors.forEach((sensor: SensorInfo) => {
 
-            let row = template.content.cloneNode(true) as HTMLElement;
-            const nameSection = row.querySelector(".sensorDataName") as HTMLElement;
-            const valueSection = row.querySelector(".sensorDataValue") as HTMLElement;
+    //         let row = template.content.cloneNode(true) as HTMLElement;
+    //         const nameSection = row.querySelector(".sensorDataName") as HTMLElement;
+    //         const valueSection = row.querySelector(".sensorDataValue") as HTMLElement;
             
-            nameSection.textContent = sensor.name;
-            valueSection.dataset.id = sensor.id;
+    //         nameSection.textContent = sensor.name;
+    //         valueSection.dataset.id = sensor.id;
 
-            displayContainer.appendChild(row);
-        });
+    //         displayContainer.appendChild(row);
+    //     });
 
-        this._updateSensorDataDisplay();
-    }
+    //     this._updateSensorDataDisplay();
+    // }
 
-    private _updateSensorDataDisplay(){
-        const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLInputElement;
-        const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
-        const time = window.store.timesShown[timeSliderValue];
-        const dateTimeSelected = DateTime.fromISO(time);
+    // private _updateSensorDataDisplay(){
+    //     const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLInputElement;
+    //     const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
+    //     const time = window.store.timesShown[timeSliderValue];
+    //     const dateTimeSelected = DateTime.fromISO(time);
 
-        window.store.sensors.forEach((sensor: SensorInfo) => {
-            const timeData = sensor.data.find((d: SensorData) => d.datetime.equals(dateTimeSelected));
-            const field = displayContainer.querySelector(`.sensorDataValue[data-id="${sensor.id}"]`);
-            if(field === null) return;
-            field.textContent = timeData !== undefined ? timeData.value.toFixed(5).toString() : "- No Value";
-        });
-    }
+    //     window.store.sensors.forEach((sensor: SensorInfo) => {
+    //         const timeData = sensor.data.find((d: SensorData) => d.datetime.equals(dateTimeSelected));
+    //         const field = displayContainer.querySelector(`.sensorDataValue[data-id="${sensor.id}"]`);
+    //         if(field === null) return;
+    //         field.textContent = timeData !== undefined ? timeData.value.toFixed(5).toString() : "- No Value";
+    //     });
+    // }
 
-    private _toggleShowSensorData(){
-        const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLInputElement;
-        displayContainer.hidden = !(document.getElementById("showSensorData") as HTMLInputElement).checked;
-    }
+    // private _toggleShowSensorData(){
+    //     const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLInputElement;
+    //     displayContainer.hidden = !(document.getElementById("showSensorData") as HTMLInputElement).checked;
+    // }
 
     private _togglePlayback(){
         const icon = document.getElementById("playbackIcon") as HTMLElement;
@@ -257,75 +237,19 @@ class App {
         slider.max = slider.value = (window.store.timesShown.length - 1).toString();
         document.getElementById("timeDisplay").innerText = (window.store.timesShown[parseInt(slider.max) - 1] as DateTime).toLocaleString(DateTime.DATETIME_SHORT);;
 
-        window.store.sensors.forEach((sensor: SensorInfo) => {
-            sensor.data = [];
-        });
+        window.store.activeDataset = [];
 
-        window.store.timesShown.forEach((time: DateTime) => {
-            // let tempVal = 0;
-            window.store.sensors.forEach((sensor: SensorInfo) => {
-                sensor.data.push({ datetime: time, value: Math.random() * 100 });
-                // sensor.data.push({ datetime: time, value: tempVal });
-                // tempVal += 12;
-            });
-        });
+        const sensorEntityIds = [..._accelerometers, ..._halfBridges, ..._quarterBridges, ..._rosettes, ..._thermistors, ..._weathers].map(s => s.id);
 
-        this._toggleShowSensorData();
-        this._updateHeatmap();
-    }
+        window.store.timeData = window.store.timesShown.map((time: DateTime) => ({ 
+                time: time,  
+                data: sensorEntityIds.map(id => ({id: id, value: Math.random() * 100}))
+            }));
 
-    private _updateHeatmap(){
+        window.store.activeDataset = window.store.timeData[0];
 
-        this._updateSensorDataDisplay();
-
-        if(this._environment.sensorLabelsVisible){
-            this._updateSensorLabels();
-        }
-
-        const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
-        const time = window.store.timesShown[timeSliderValue];
-        const dateTimeSelected = DateTime.fromISO(time);
-
-        const textureOrderedSensors = window.store.sensors.map((s: SensorInfo) => ({...s})).sort((a: SensorInfo, b: SensorInfo) => a.textureOrder - b.textureOrder);
-
-        let textureData: any[] = [];
-
-        textureOrderedSensors.map((s: SensorInfo) => {
-            const data = s.data.find((d: SensorData) => d.datetime.equals(dateTimeSelected));
-            try{
-                textureData.push(...convertValuesToHeatmap(0, 100, data !== undefined ? data.value : 0));
-            } catch (e) {
-                console.error(e);
-            }
-        });
-        
-        this._environment.deckMesh.material?.dispose();
-
-        let texture = new BABYLON.RawTexture(
-            new Uint8Array(textureData),
-            4,
-            2,
-            BABYLON.Engine.TEXTUREFORMAT_RGB,
-            this._scene,
-            false,
-            false,
-            BABYLON.Texture.TRILINEAR_SAMPLINGMODE
-        );
-
-        let heatmapMaterial = new BABYLON.StandardMaterial("heatmapMaterial", this._scene);
-        heatmapMaterial.diffuseTexture = texture;
-        heatmapMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
-
-        //let animation = new BABYLON.Animation("heatmapAnimation", "material.texture", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
-
-        this._environment.deckMesh.material = heatmapMaterial;
-        this._adjustDeckHeatmapAlpha();
-    }
-
-    private _adjustDeckHeatmapAlpha(){
-        const show = (document.getElementById("showHeatmap") as HTMLInputElement).checked ? 1 : 0;
-        const alphaValue = parseFloat((document.getElementById("heatmapOpacity") as HTMLInputElement).value);
-        this._environment.deckMesh.material.alpha = Math.min(show, alphaValue);
+        this._environment.updateHeatmap();
+        this._sensorManager.updateAllShownLabels();
     }
 
     private _initCamera(){

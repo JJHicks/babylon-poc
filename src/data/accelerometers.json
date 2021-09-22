@@ -10,8 +10,7 @@
         "channelQTY": 2,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "A3_HC0800_F_1",
@@ -24,8 +23,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "A4_FB1100_A_1",
@@ -38,8 +36,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G01_FB0800_A_1",
@@ -52,8 +49,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G01_FB1100_A_1",
@@ -66,8 +62,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "A2_FB0500_A_1",
@@ -80,8 +75,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 1",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G01_FB0500_A_1",
@@ -94,8 +88,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 1",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G04_FB0500_A_1",
@@ -108,8 +101,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G04_FB0800_A_1",
@@ -122,8 +114,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G04_FB1100_A_1",
@@ -136,8 +127,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "A7_FB0500_A_1",
@@ -150,8 +140,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "A8_FB0800_A_1/2",
@@ -164,8 +153,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "A8_HC0800_F_1",
@@ -178,8 +166,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "A9_FB1100_A_1",
@@ -192,8 +179,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G07_FB1100_A_1",
@@ -206,8 +192,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G07_FB0500_A_1",
@@ -220,8 +205,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G07_FB0800_A_1",
@@ -234,7 +218,6 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     }
 ]
