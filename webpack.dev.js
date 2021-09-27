@@ -5,10 +5,11 @@ const common = require("./webpack.common.js");
 const appDirectory = fs.realpathSync(process.cwd());
 
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = merge(common, {
     entry: {
-        index: path.resolve(appDirectory, "src/app.ts")
+        index: [path.resolve(appDirectory, "src/app.ts"), path.resolve(appDirectory, "src/scss/style.scss")]
     },
     output: {
         path: path.resolve(appDirectory, "dist/js"),
@@ -37,6 +38,21 @@ module.exports = merge(common, {
                         }
                     }
                 ]
+            },
+            {
+                test: /\.scss$/,
+                exclude: /node_modules/,
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: "css-loader",
+                        options: {
+                            // minimize: true,
+                            sourceMap: true
+                        }
+                    },
+                    "sass-loader"
+                ]
             }
         ],
     },   
@@ -46,6 +62,7 @@ module.exports = merge(common, {
             filename: "index.html",
             template: path.resolve(appDirectory, "public/index.html"),
         }),
+        new MiniCssExtractPlugin()
         // new CleanWebpackPlugin({
         //     cleanOnceBeforeBuildPatterns: ["public/js/build/*","public/css/build/*"]
         // })

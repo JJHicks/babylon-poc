@@ -9,8 +9,10 @@ import { SensorInfo, SensorData } from "./interfaces/sensorInfo";
 import convertValuesToHeatmap from "./helpers/ValuesToHeatmap";
 import { DateTime } from "luxon";
 import { TimeDataSet } from "./interfaces/store";
+import flatpickr from "flatpickr";
 
 import { SensorManager } from "./sensorManager";
+import { CSVHelper } from "./helpers/CSVHelper";
 
 // Temp imports for fake data
 import _accelerometers from "./data/accelerometers.json";
@@ -20,6 +22,7 @@ import _rosettes from "./data/rosettes.json";
 import _thermistors from "./data/thermistors.json";
 import _weathers from "./data/weathers.json";
 import { HeatmapManager } from "./heatmapManager";
+import { DeformationSurface } from "./deformationSurface";
 
 class App {
 
@@ -35,6 +38,7 @@ class App {
     private _playbackInterval: number;
     private _sensorManager: SensorManager;
     private _heatmapManager: HeatmapManager;
+    private _deformationSurface: DeformationSurface;
 
     constructor() {
 
@@ -76,13 +80,25 @@ class App {
         });
 
         this._buildEnvironment();
+
+        flatpickr("#startDate", {
+            defaultDate: new Date(),
+        });
+
+        let tomorrow = new Date();
+        tomorrow.setDate(tomorrow.getDate() + 1);
+
+        flatpickr("#endDate", {
+            defaultDate: tomorrow,
+            minDate: (document.getElementById("startDate") as HTMLInputElement).value
+        });
     }
 
     private async _buildEnvironment(){
         this._initCamera();
         await this._environment.load();
     
-        this._addEvents();
+        this._bindEvents();
         // Babylon GUI
         this._initInfoDisplay();
 
@@ -96,9 +112,12 @@ class App {
         this._heatmapManager.scene = this._scene;
 
         this._generateFalseSensorData();
+
+        // Surface deformation test
+        this._deformationSurface = new DeformationSurface();
     }
 
-    private _addEvents(){
+    private _bindEvents(){
 
         // document.getElementById("showHeatmap").addEventListener("change", e => {
         //     api.getSensorData().then(res => console.log(res));
@@ -112,11 +131,29 @@ class App {
         });
 
         document.getElementById("sensorsInFront").addEventListener("change", e => this._sensorManager.setAllSensorsVisible((e.target as HTMLInputElement).checked));
-        document.getElementById("date").addEventListener("change", e => this._generateFalseSensorData());
         document.getElementById("showHeatmap").addEventListener("change", e => this._heatmapManager.adjustDeckHeatmapAlpha());
         // document.getElementById("showSensorData").addEventListener("change", e => this._toggleShowSensorData());
         document.getElementById("heatmapOpacity").addEventListener("input", e => this._heatmapManager.adjustDeckHeatmapAlpha());
         document.getElementById("playbackIcon").addEventListener("click", e => this._togglePlayback());
+        document.getElementById("heatmapDatasetSelect").addEventListener("change", e => this._heatmapManager.updateHeatmap());
+        document.getElementById("exportCSV").addEventListener("click", e => this._exportCSV());
+       
+        document.getElementById("startDate").addEventListener("change", e => {
+            const startDatePicker = document.getElementById("startDate") as HTMLInputElement;
+            const endDatePicker = document.getElementById("endDate") as HTMLInputElement;
+
+            flatpickr("#endDate", {
+                minDate: startDatePicker.value
+            });
+
+            if(new Date(startDatePicker.value) > new Date(endDatePicker.value)){
+                endDatePicker.value = startDatePicker.value;
+            }
+
+            this._generateFalseSensorData()
+        });
+        document.getElementById("endDate").addEventListener("change", e => this._generateFalseSensorData());
+
 
         const labelCheckboxes = document.getElementsByClassName("label-toggle");
         for(let i = 0; i < labelCheckboxes.length; i++){
@@ -146,6 +183,32 @@ class App {
             }
         }
     }
+
+    private _exportCSV(){
+
+        let headers: string[] = [];
+        
+        ["accelerometers", "halfBridges", "quarterBridges", "rosettes"].forEach(groupName => 
+            headers.push(...this._sensorManager.getGageGroup(groupName).map(group => group.metaData.id))
+        );
+
+        let data: string[][] = [];
+
+        window.store.timeData.forEach((timeData: TimeDataSet) => {
+            let row = [`"${timeData.time.toLocaleString(DateTime.DATETIME_SHORT)}"`];
+            headers.forEach(header => {
+                let datapointForHeader = timeData.data.find(td => td.id === header);
+                row.push(datapointForHeader !== undefined ? "" + datapointForHeader.value : "--");
+            });
+            data.push(row);
+        });
+
+        headers.unshift("Datetime");
+
+        const startDate = (document.getElementById("startDate") as HTMLInputElement).value;
+        const endDate = (document.getElementById("endDate") as HTMLInputElement).value;
+        CSVHelper.exportCSVFile(headers, data, `${startDate}-${endDate}_export`);
+    }   
     
     private _handleTimeChange(){
         const val = (document.getElementById("timeSelect") as HTMLInputElement).value;
@@ -225,17 +288,19 @@ class App {
     }
 
     private _generateFalseSensorData(){
-        const hours = Array.from(Array(24).keys()).map((el: any) => el.toString().padStart(2, "0"));
-        const minutes = ["00", "30"];
-        const date = (document.getElementById("date") as HTMLInputElement).value;
+        const interval = 30;    // How often readings are taken, in minutes
+
+        let datetime = DateTime.fromISO((document.getElementById("startDate") as HTMLInputElement).value);
+        const end = DateTime.fromISO((document.getElementById("endDate") as HTMLInputElement).value);
 
         window.store.timesShown = [];
 
-        hours.forEach((hour: string) => {
-            minutes.forEach((minute: string) => {
-                window.store.timesShown.push(DateTime.fromISO(`${date}T${hour}:${minute}`))
-            });
-        });
+        let timeIntervals = 0;        // To limit the size of the store times to avoid issues
+        while(datetime <= end && timeIntervals < 5000){
+            window.store.timesShown.push(datetime);
+            datetime = datetime.plus({minutes: interval});
+            timeIntervals++;
+        }
 
         const slider = document.getElementById("timeSelect") as HTMLInputElement;
         slider.max = slider.value = (window.store.timesShown.length - 1).toString();

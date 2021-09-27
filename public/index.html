@@ -9,15 +9,21 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
-    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <main>
-        <header class="pe-none">
+        <header class="pe-none ui-overlay">
             <div>
-                <div class="form-group">
-                    <label>Date</label>
-                    <input class="form-control pe-auto" type="date" name="date" id="date">
+                <div>
+                    <div class="form-group">
+                        <label>Start Date</label>
+                        <input class="form-control pe-auto" type="date" name="startDate" id="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label>End Date</label>
+                        <input class="form-control pe-auto" type="date" name="endDate" id="endDate">
+                    </div>
+                    <button id="exportCSV" class="pe-auto btn btn-primary form-space">Export CSV</button>
                 </div>
                 <div>
                     <div class="form-group">
@@ -35,7 +41,6 @@
                             Show Data Table
                         </label>
                     </div> -->
-
                     <div class="form-check">
                         <input class="form-check-input pe-auto" type="checkbox" value="" id="showHeatmap" checked>
                         <label class="form-check-label" for="showHeatmap">
@@ -100,7 +105,7 @@
             </div>
         </header>
         <section id="canvasContainer"></section>
-        <footer class="pe-none">
+        <footer class="pe-none ui-overlay">
             <div class="text-center mb-10">
                 <h3 id="timeDisplay"></h5>
             </div>

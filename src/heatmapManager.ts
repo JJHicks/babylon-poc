@@ -78,7 +78,6 @@ export class HeatmapManager{
 
         for(let i = 0; i < heatmapLength*heatmapWidth; i++){
             const datapoint = sensorsToShow.find(s => s.sector === i);
-            console.debug(datapoint);
             try{
                 textureData.push(...convertValuesToHeatmap(0, 100, datapoint !== undefined ? datapoint.value : 0));
             } catch (e) {
