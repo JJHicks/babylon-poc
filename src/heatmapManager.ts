@@ -87,6 +87,27 @@ export class HeatmapManager{
 
         this._heatmapMesh.material?.dispose();
 
+        // const multiplier = 5;
+        // let testLength = heatmapLength*multiplier;
+        // let testWidth = heatmapWidth*multiplier;
+        // let testData = [];
+
+        // for(let i = 0; i < multiplier * multiplier; i++){
+        //     testData.push(...textureData);
+        // }
+
+        // let texture = new BABYLON.RawTexture(
+        //     //Uint8Array.from(testData),
+        //     new Uint8Array(testData),
+        //     testLength,
+        //     testWidth,
+        //     BABYLON.Engine.TEXTUREFORMAT_RGB,
+        //     this.scene,
+        //     false,
+        //     false,
+        //     BABYLON.Texture.TRILINEAR_SAMPLINGMODE
+        // );
+
         let texture = new BABYLON.RawTexture(
             new Uint8Array(textureData),
             heatmapLength,

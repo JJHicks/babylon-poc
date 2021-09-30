@@ -23,6 +23,7 @@ import _thermistors from "./data/thermistors.json";
 import _weathers from "./data/weathers.json";
 import { HeatmapManager } from "./heatmapManager";
 import { DeformationSurface } from "./deformationSurface";
+import { heatmapTest } from "./heatmapTest";
 
 class App {
 
@@ -39,6 +40,9 @@ class App {
     private _sensorManager: SensorManager;
     private _heatmapManager: HeatmapManager;
     private _deformationSurface: DeformationSurface;
+
+    // Heatmap tests
+    private _heatmapTest: heatmapTest;
 
     constructor() {
 
@@ -58,6 +62,8 @@ class App {
         this._engine = new BABYLON.Engine(this._canvas, true);
         this._scene = new BABYLON.Scene(this._engine);
         this._environment = new Environment(this._scene);
+
+        this._engine.displayLoadingUI();
 
         // Optimizations
         this._scene.autoClear = false; // Color buffer
@@ -114,7 +120,12 @@ class App {
         this._generateFalseSensorData();
 
         // Surface deformation test
-        this._deformationSurface = new DeformationSurface();
+        this._deformationSurface = new DeformationSurface(5, 3);
+
+        this._heatmapTest = new heatmapTest();
+
+        this._engine.hideLoadingUI();
+        document.querySelectorAll(".hide-before-load").forEach((el: HTMLElement) => el.hidden = false);
     }
 
     private _bindEvents(){
@@ -172,7 +183,7 @@ class App {
         this._scene.onPointerDown = (evt, pickResult) => {
             let results = this._scene.multiPick(this._scene.unTranslatedPointer.x, this._scene.unTranslatedPointer.y);
             //console.log(pickResult);
-            //console.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
+            // console.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
 
             let firstSensorHitByRay = results.find(info => info.pickedMesh.name.includes("sensor_"));
 
@@ -219,6 +230,9 @@ class App {
 
         this._sensorManager.updateAllShownLabels();
         this._heatmapManager.updateHeatmap();
+
+        this._heatmapTest.updateHeatmaps();
+        this._deformationSurface.updateSurface();
     }
 
     // private _initSensorDataDisplay(){
