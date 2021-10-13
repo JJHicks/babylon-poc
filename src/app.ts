@@ -6,10 +6,10 @@ import { Environment } from "./environment";
 import * as GUI from "babylonjs-gui";
 import { api } from "./api/api";
 import { SensorInfo, SensorData } from "./interfaces/sensorInfo";
-import convertValuesToHeatmap from "./helpers/ValuesToHeatmap";
 import { DateTime } from "luxon";
 import { TimeDataSet } from "./interfaces/store";
 import flatpickr from "flatpickr";
+import "bootstrap";
 
 import { SensorManager } from "./sensorManager";
 import { CSVHelper } from "./helpers/CSVHelper";
@@ -24,6 +24,7 @@ import _weathers from "./data/weathers.json";
 import { HeatmapManager } from "./heatmapManager";
 import { DeformationSurface } from "./deformationSurface";
 import { heatmapTest } from "./heatmapTest";
+import { DetailsViewManager } from "./detailViewManager";
 
 class App {
 
@@ -35,6 +36,7 @@ class App {
 
     private _infoDisplayTexture: GUI.AdvancedDynamicTexture;
     private _infoDisplayTextBlock: GUI.TextBlock;
+    private _detailsViewManager: DetailsViewManager;
 
     private _playbackInterval: number;
     private _sensorManager: SensorManager;
@@ -45,6 +47,8 @@ class App {
     private _heatmapTest: heatmapTest;
 
     constructor() {
+
+        BABYLON.RenderingManager.MAX_RENDERINGGROUPS = 8;
 
         window.store = {
             activeDataset: null,
@@ -59,9 +63,10 @@ class App {
         container.appendChild(this._canvas);
 
         // Initialize babylon scene and engine
-        this._engine = new BABYLON.Engine(this._canvas, true);
+        this._engine = new BABYLON.Engine(this._canvas, true, { stencil: true });
         this._scene = new BABYLON.Scene(this._engine);
         this._environment = new Environment(this._scene);
+        this._detailsViewManager = new DetailsViewManager();
 
         this._engine.displayLoadingUI();
 
@@ -148,6 +153,8 @@ class App {
         document.getElementById("playbackIcon").addEventListener("click", e => this._togglePlayback());
         document.getElementById("heatmapDatasetSelect").addEventListener("change", e => this._heatmapManager.updateHeatmap());
         document.getElementById("exportCSV").addEventListener("click", e => this._exportCSV());
+        document.getElementById("bridgeOpacity").addEventListener("input", e => this._environment.adjustBridgeAlpha());
+        window.addEventListener("resize", () => this._resizeCanvas());
        
         document.getElementById("startDate").addEventListener("change", e => {
             const startDatePicker = document.getElementById("startDate") as HTMLInputElement;
@@ -161,10 +168,40 @@ class App {
                 endDatePicker.value = startDatePicker.value;
             }
 
-            this._generateFalseSensorData()
+            this._generateFalseSensorData();
         });
         document.getElementById("endDate").addEventListener("change", e => this._generateFalseSensorData());
 
+        document.getElementById("detailsSidebar").addEventListener("shown.bs.collapse", (e) => {
+            if((e.target as HTMLElement).id !== "detailsSidebar")
+                return;
+            const icon = document.getElementById("detailsSidebarToggleIcon") as HTMLElement;
+            icon.classList.remove("bi-arrow-left-circle");
+            icon.classList.add("bi-arrow-right-circle");
+            this._resizeCanvas();
+        });
+
+        document.getElementById("detailsSidebar").addEventListener("hidden.bs.collapse", (e) => {
+            if((e.target as HTMLElement).id !== "detailsSidebar")
+                return;
+            const icon = document.getElementById("detailsSidebarToggleIcon") as HTMLElement;
+            icon.classList.remove("bi-arrow-right-circle");
+            icon.classList.add("bi-arrow-left-circle");
+            this._resizeCanvas();
+            this._sensorManager.clearSensorHighlights();
+        });
+
+        document.getElementById("detailsSidebar").addEventListener("click", (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            const el = e.target as HTMLElement;
+
+            if(el.nodeName !== "A")
+                return;
+            const id = el.dataset.id;
+            this._detailsViewManager.updateGraph(id);
+            this._sensorManager.highlightSensor(id);
+        });
 
         const labelCheckboxes = document.getElementsByClassName("label-toggle");
         for(let i = 0; i < labelCheckboxes.length; i++){
@@ -174,32 +211,41 @@ class App {
             });
         }
 
-        window.addEventListener("resize", () => {
-            this._canvas.width = window.innerWidth;
-            this._canvas.height = window.innerHeight;
-            this._engine.resize();
-        });
-
         this._scene.onPointerDown = (evt, pickResult) => {
             let results = this._scene.multiPick(this._scene.unTranslatedPointer.x, this._scene.unTranslatedPointer.y);
-            //console.log(pickResult);
-            // console.log(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
+            // console.debug(pickResult.pickedPoint.x, pickResult.pickedPoint.y, pickResult.pickedPoint.z);
 
-            let firstSensorHitByRay = results.find(info => info.pickedMesh.name.includes("sensor_"));
-
-            if(firstSensorHitByRay){
-                const sensor = window.store.sensors.find((s: SensorInfo) => s.name === firstSensorHitByRay.pickedMesh.name);
-                console.log("SENSOR HIT: " + firstSensorHitByRay.pickedMesh.name);
-                this._infoDisplayTextBlock.text = `${firstSensorHitByRay.pickedMesh.name} - ${sensor.id}`;
+            if(document.getElementById("detailsSidebar").classList.contains("show")){
+                if(results.length < 1) return;
+                const clickedMeshId = results[results.length - 1].pickedMesh.id;
+                if(this._sensorManager.isSensorId(clickedMeshId)){
+                    console.debug(clickedMeshId);
+                    this._sensorManager.highlightSensor(clickedMeshId);
+                    this._detailsViewManager.updateGraph(clickedMeshId);
+                }                
             }
         }
     }
 
+    private _resizeCanvas(){
+        this._canvas.width = window.innerWidth;
+        this._canvas.height = window.innerHeight;
+        this._engine.resize();
+    }
+
     private _exportCSV(){
 
-        let headers: string[] = [];
+        let sensorGroups: string[] = [];
+
+        document.querySelectorAll(".export-type-select").forEach((option: HTMLInputElement) => {
+            if(option.checked){
+                sensorGroups.push(option.dataset["type"]);
+            }
+        });
+
+        let headers: string[] = [];  
         
-        ["accelerometers", "halfBridges", "quarterBridges", "rosettes"].forEach(groupName => 
+        sensorGroups.forEach(groupName => 
             headers.push(...this._sensorManager.getGageGroup(groupName).map(group => group.metaData.id))
         );
 
@@ -218,7 +264,9 @@ class App {
 
         const startDate = (document.getElementById("startDate") as HTMLInputElement).value;
         const endDate = (document.getElementById("endDate") as HTMLInputElement).value;
-        CSVHelper.exportCSVFile(headers, data, `${startDate}-${endDate}_export`);
+        CSVHelper.exportCSVFile(headers, data, `${startDate}-${endDate}_${sensorGroups.join("_")}_export`);
+
+        // (bootstrap as any).Modal.getInstance(document.getElementById("exportSelectionModal")).hide();
     }   
     
     private _handleTimeChange(){
@@ -325,9 +373,9 @@ class App {
         const sensorEntityIds = [..._accelerometers, ..._halfBridges, ..._quarterBridges, ..._rosettes, ..._thermistors, ..._weathers].map(s => s.id);
 
         window.store.timeData = window.store.timesShown.map((time: DateTime) => ({ 
-                time: time,  
-                data: sensorEntityIds.map(id => ({id: id, value: Math.random() * 100}))
-            }));
+            time: time,  
+            data: sensorEntityIds.map(id => ({id: id, value: Math.random() * 100}))
+        }));
 
         window.store.activeDataset = window.store.timeData[0];
 

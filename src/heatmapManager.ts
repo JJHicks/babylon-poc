@@ -76,10 +76,15 @@ export class HeatmapManager{
             }
         });
 
+        // let c = 0;
+
         for(let i = 0; i < heatmapLength*heatmapWidth; i++){
             const datapoint = sensorsToShow.find(s => s.sector === i);
+            const value = datapoint !== undefined ? datapoint.value : 0;
+            // const value = c;
+            // c += 6;
             try{
-                textureData.push(...convertValuesToHeatmap(0, 100, datapoint !== undefined ? datapoint.value : 0));
+                textureData.push(...convertValuesToHeatmap(0, 100, value));
             } catch (e) {
                 console.error(e);
             }
@@ -120,7 +125,9 @@ export class HeatmapManager{
         );
 
         let heatmapMaterial = new BABYLON.StandardMaterial("heatmapMaterial", this.scene);
-        heatmapMaterial.diffuseTexture = texture;
+        // heatmapMaterial.diffuseTexture = texture;
+        heatmapMaterial.disableLighting = true;
+        heatmapMaterial.emissiveTexture = texture;
         heatmapMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
         //let animation = new BABYLON.Animation("heatmapAnimation", "material.texture", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);

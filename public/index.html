@@ -1,126 +1,239 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xml:lang="en" xmlns="http://www.w3.org/1999/xhtml">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Bridge</title>
-
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <meta name="google" content="notranslate">
+    <meta http-equiv="Content-Language" content="en">
+    <title>McFarland Bridge</title>
 </head>
+
 <body>
-    <main>
-        <header class="pe-none ui-overlay hide-before-load" hidden>
-            <div>
-                <div>
-                    <div class="form-group">
-                        <label>Start Date</label>
-                        <input class="form-control pe-auto" type="date" name="startDate" id="startDate">
-                    </div>
-                    <div class="form-group">
-                        <label>End Date</label>
-                        <input class="form-control pe-auto" type="date" name="endDate" id="endDate">
-                    </div>
-                    <button id="exportCSV" class="pe-auto btn btn-primary form-space">Export CSV</button>
-                </div>
-                <div>
-                    <div class="form-group">
-                        <label>Heatmap Dataset</label>
-                        <select id="heatmapDatasetSelect" class="form-select pe-auto" aria-label="Heatmap dropdown dataset">
-                            <option value="accelerometers">Accelerometers</option>
-                            <option value="halfBridges">Half Bridges</option>
-                            <option value="quarterBridges">Quarter Bridges</option>
-                            <option value="rosettes">Rosettes</option>
-                        </select>
-                    </div>
-                    <!-- <div class="form-check">
-                        <input class="form-check-input pe-auto" type="checkbox" value="" id="showSensorData" checked>
-                        <label class="form-check-label" for="showSensorData">
-                            Show Data Table
-                        </label>
-                    </div> -->
-                    <div class="form-check">
-                        <input class="form-check-input pe-auto" type="checkbox" value="" id="showHeatmap" checked>
-                        <label class="form-check-label" for="showHeatmap">
-                            Heatmap
-                        </label>
-                    </div>
-                    <div class="slider-container">
-                        <label for="heatmapOpacity" class="form-label mb-0">Heatmap Opacity</label>
-                        <input type="range" class="form-range pe-auto" min="0" max="1" step=".01" id="heatmapOpacity" value="1">   
-                    </div>
-                </div>
-                <div>
-                    <div class="form-check">
-                        <input class="form-check-input pe-auto" type="checkbox" value="" id="sensorsInFront">
-                        <label class="form-check-label" for="sensorsInFront">
-                            Sensors always on top
-                        </label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" value="" class="form-check-input pe-auto label-toggle" data-type="nodeBoxes">
-                        <label for="" class="form-check-label">Node Box Labels</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" value="" class="form-check-input pe-auto label-toggle" data-type="auxBoxes">
-                        <label for="" class="form-check-label">Aux Box Labels</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" value="" class="form-check-input pe-auto label-toggle" data-type="accelerometers">
-                        <label for="" class="form-check-label">Accelerometer Labels</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" value="" class="form-check-input pe-auto label-toggle" data-type="halfBridges">
-                        <label for="" class="form-check-label">Half Bridge Labels</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" value="" class="form-check-input pe-auto label-toggle" data-type="quarterBridges">
-                        <label for="" class="form-check-label">Quarter Bridge Labels</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" value="" class="form-check-input pe-auto label-toggle" data-type="rosettes">
-                        <label for="" class="form-check-label">Rosette Labels</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" value="" class="form-check-input pe-auto label-toggle" data-type="thermistors">
-                        <label for="" class="form-check-label">Thermistor Labels</label>
-                    </div>
-                    <div class="form-check">
-                        <input type="checkbox" value="" class="form-check-input pe-auto label-toggle" data-type="weathers">
-                        <label for="" class="form-check-label">Weather Sensor Labels</label>
-                    </div>
-                </div>
-
-                <!-- <div id="sensorDataDisplayContainer" class="pe-auto" hidden>
-                    <h5 class="text-center">Sensor Values</h5>
-                    <template id="sensorDataDisplayRowTemplate">
-                        <div class="sensorDataRow">
-                            <div class="sensorDataName"></div>
-                            <div class="sensorDataValue" data-id=""></div>
+    <div class="container-fluid">
+        <div class="row flex-nowrap">
+            <main class="col -100 m-0 p-0">
+                <header class="pe-none ui-overlay hide-before-load" hidden>
+                    <div>
+                        <div>
+                            <div class="form-group">
+                                <label>Start Date</label>
+                                <input class="form-control pe-auto" type="date" name="startDate" id="startDate">
+                            </div>
+                            <div class="form-group">
+                                <label>End Date</label>
+                                <input class="form-control pe-auto" type="date" name="endDate" id="endDate">
+                            </div>
+                            <button type="button" class="btn btn-primary pe-auto form-space" data-bs-toggle="modal"
+                                data-bs-target="#exportSelectionModal">
+                                Export CSV
+                            </button>
                         </div>
-                    </template>
-                </div> -->
-            </div>
-        </header>
-        <section id="canvasContainer"></section>
-        <footer class="pe-none ui-overlay hide-before-load" hidden>
-            <div class="text-center mb-10">
-                <h3 id="timeDisplay"></h5>
-            </div>
-            <div id="playbackControlContainer" class="pe-auto">
-                <div id="playbackIconContainer">
-                    <i id="playbackIcon" class="fas fa-play"></i>
+                        <div>
+                            <div class="form-group">
+                                <label>Heatmap Dataset</label>
+                                <select id="heatmapDatasetSelect" class="form-select pe-auto"
+                                    aria-label="Heatmap dropdown dataset">
+                                    <option value="accelerometers">Accelerometers</option>
+                                    <option value="halfBridges">Half Bridges</option>
+                                    <option value="quarterBridges">Quarter Bridges</option>
+                                    <option value="rosettes">Rosettes</option>
+                                </select>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input pe-auto" type="checkbox" value="" id="showHeatmap"
+                                    checked>
+                                <label class="form-check-label" for="showHeatmap">
+                                    Heatmap
+                                </label>
+                            </div>
+                            <div class="slider-container">
+                                <label for="heatmapOpacity" class="form-label mb-0">Heatmap Opacity</label>
+                                <input type="range" class="form-range pe-auto" min="0" max="1" step=".01"
+                                    id="heatmapOpacity" value="1">
+                            </div>
+                            <div class="slider-container">
+                                <label for="bridgeOpacity" class="form-label mb-0">Bridge Opacity</label>
+                                <input type="range" class="form-range pe-auto" min="0" max="1" step=".01"
+                                    id="bridgeOpacity" value="1">
+                            </div>
+                        </div>
+                        <div>
+                            <div class="form-check">
+                                <input class="form-check-input pe-auto" type="checkbox" value="" id="sensorsInFront">
+                                <label class="form-check-label" for="sensorsInFront">
+                                    Sensors always on top
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" value="" class="form-check-input pe-auto label-toggle"
+                                    data-type="nodeBoxes">
+                                <label for="" class="form-check-label">Node Box Labels</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" value="" class="form-check-input pe-auto label-toggle"
+                                    data-type="auxBoxes">
+                                <label for="" class="form-check-label">Aux Box Labels</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" value="" class="form-check-input pe-auto label-toggle"
+                                    data-type="accelerometers">
+                                <label for="" class="form-check-label">Accelerometer Labels</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" value="" class="form-check-input pe-auto label-toggle"
+                                    data-type="halfBridges">
+                                <label for="" class="form-check-label">Half Bridge Labels</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" value="" class="form-check-input pe-auto label-toggle"
+                                    data-type="quarterBridges">
+                                <label for="" class="form-check-label">Quarter Bridge Labels</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" value="" class="form-check-input pe-auto label-toggle"
+                                    data-type="rosettes">
+                                <label for="" class="form-check-label">Rosette Labels</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" value="" class="form-check-input pe-auto label-toggle"
+                                    data-type="thermistors">
+                                <label for="" class="form-check-label">Thermistor Labels</label>
+                            </div>
+                            <div class="form-check">
+                                <input type="checkbox" value="" class="form-check-input pe-auto label-toggle"
+                                    data-type="weathers">
+                                <label for="" class="form-check-label">Weather Sensor Labels</label>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+                <section id="canvasContainer"></section>
+                <footer class="pe-none ui-overlay hide-before-load" hidden>
+                    <div class="text-center mb-10">
+                        <h3 id="timeDisplay">
+                            </h5>
+                    </div>
+                    <div id="playbackControlContainer" class="pe-auto">
+                        <div id="playbackIconContainer">
+                            <i id="playbackIcon" class="fas fa-play"></i>
+                        </div>
+                        <input type="range" class="form-range" min="0" max="1" step="1" id="timeSelect">
+                    </div>
+                </footer>
+                <a href="#" id="detailsSidebarToggle" data-bs-target="#detailsSidebar" data-bs-toggle="collapse"
+                    class="pe-auto text-decoration-none"><i id="detailsSidebarToggleIcon"
+                        class="bi bi-arrow-left-circle"></i></a>
+            </main>
+            <div class="col-auto px-0 hide-before-load" hidden>
+                <div id="detailsSidebar" class="collapse collapse-horizontal border-end">
+                    <div id="sidebar-nav" class="list-group border-0 roundeds-0 text-sm-start min-vh-100">
+                        <div id="graphContainer">
+                            <svg id="chartSvg"></svg>
+                            <div id="detailViewChartIdDisplay"></div>
+                        </div>
+                        <div>
+                            <h2 class="accordion-header">
+                                <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                    data-bs-target="#accelerometersListContainer" aria-expanded="false"
+                                    aria-controls="accelerometersListContainer">
+                                    Accelerometers
+                                </button>
+                            </h2>
+                            <div id="accelerometersListContainer" class="accordion-collapse collapse"
+                                aria-labelledby="accelerometersList">
+                                <div class="accordion-body">
+                                    <ul id="accelerometersList" class="list-group"></ul>
+                                </div>
+                            </div>
+                            <div>
+                                <h2 class="accordion-header">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#halfBridgeListContainer" aria-expanded="false"
+                                        aria-controls="halfBridgeListContainer">
+                                        Half Bridges
+                                    </button>
+                                </h2>
+                                <div id="halfBridgeListContainer" class="accordion-collapse collapse"
+                                    aria-labelledby="halfBridgeList">
+                                    <div class="accordion-body">
+                                        <ul id="halfBridgeList" class="list-group"></ul>
+                                    </div>
+                                </div>
+                                <div>
+                                    <h2 class="accordion-header">
+                                        <button class="accordion-button collapsed" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#quarterBridgeListContainer"
+                                            aria-expanded="false" aria-controls="quarterBridgeListContainer">
+                                            Half Bridges
+                                        </button>
+                                    </h2>
+                                    <div id="quarterBridgeListContainer" class="accordion-collapse collapse"
+                                        aria-labelledby="quarterBridgeList">
+                                        <div class="accordion-body">
+                                            <ul id="quarterBridgeList" class="list-group"></ul>
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <h2 class="accordion-header">
+                                            <button class="accordion-button collapsed" type="button"
+                                                data-bs-toggle="collapse" data-bs-target="#rosetteListContainer"
+                                                aria-expanded="false" aria-controls="rosetteListContainer">
+                                                Rosettes
+                                            </button>
+                                        </h2>
+                                        <div id="rosetteListContainer" class="accordion-collapse collapse"
+                                            aria-labelledby="rosetteList">
+                                            <div class="accordion-body">
+                                                <ul id="rosetteList" class="list-group"></ul>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <input type="range" class="form-range" min="0" max="1" step="1" id="timeSelect">
-            </div>
-        </footer> 
-    </main>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
-    <script src="https://code.jquery.com/pep/0.4.3/pep.js"></script>
-    <script src="js/index.js"></script>
+                <div class="modal fade" id="exportSelectionModal" tabindex="-1" role="dialog"
+                    aria-labelledby="exportSelectionModalTitle" aria-hidden="true">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exportSelectionModalTitle">Export CSV</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-check">
+                                    <input type="checkbox" value="" class="form-check-input pe-auto export-type-select"
+                                        data-type="accelerometers">
+                                    <label for="" class="form-check-label">Accelerometers</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" value="" class="form-check-input pe-auto export-type-select"
+                                        data-type="halfBridges">
+                                    <label for="" class="form-check-label">Half Bridges</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" value="" class="form-check-input pe-auto export-type-select"
+                                        data-type="quarterBridges">
+                                    <label for="" class="form-check-label">Quarter Bridges</label>
+                                </div>
+                                <div class="form-check">
+                                    <input type="checkbox" value="" class="form-check-input pe-auto export-type-select"
+                                        data-type="rosettes">
+                                    <label for="" class="form-check-label">Rosettes</label>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                <button id="exportCSV" class="btn btn-primary">Download CSV</button>
+                            </div>
+                        </div>
+                    </div>
+                    <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.9.1/underscore-min.js"></script>
+                    <script src="js/index.js"></script>
 </body>
+
 </html>

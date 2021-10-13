@@ -16,6 +16,7 @@ export class SensorManager{
 
     private static _instance: SensorManager;
     private _entities: SensorManagerEntities;
+    private _highlightLayer?: BABYLON.HighlightLayer;
 
     public sensorData: any[];
 
@@ -41,12 +42,16 @@ export class SensorManager{
         return SensorManager._instance;
     }
 
-    public updateAllShownLabels(){
+    public isSensorId(id: string): boolean{
+        return this._entities.gageGroups.some(g => g.objects.some(o => o.metaData.id === id));
+    }
+
+    public updateAllShownLabels(): void{
         const groupsToUpdate = this._entities.gageGroups.filter(group => group.labelsVisible).map(g => g.name);
         groupsToUpdate.forEach(groupName => this.updateLabels(groupName, true));
     }
 
-    public updateLabels(type: string, visible: boolean){
+    public updateLabels(type: string, visible: boolean): void{
 
         const titleFont = "bold 32px monospace";
         const dataFont = "bold 24px monospace";
@@ -134,7 +139,7 @@ export class SensorManager{
         this.scene.blockMaterialDirtyMechanism = false;
     }
 
-    public setAllSensorsVisible(visible: boolean){
+    public setAllSensorsVisible(visible: boolean): void{
         const renderGroupId = visible ? 3 : 2;
 
         this._entities.nodeBoxes.forEach(nodeBox => nodeBox.mesh.renderingGroupId = renderGroupId);
@@ -144,7 +149,22 @@ export class SensorManager{
         });
     }
 
-    private _measureTextWidth(text: string, font: string){
+    public highlightSensor(id: string): void{
+        this.clearSensorHighlights();
+
+        const sensorGroup = this._entities.gageGroups.find(g => g.objects.some(o => o.metaData.id === id));
+        this._highlightLayer = new BABYLON.HighlightLayer("sensorHLLayer", this.scene);    
+        const sensor = sensorGroup.objects.find(o => o.metaData.id === id);
+        this._highlightLayer.addMesh(sensor.mesh, BABYLON.Color3.Green());        
+    }
+
+    public clearSensorHighlights(): void{
+        if(this._highlightLayer){
+            this._highlightLayer.dispose();
+        }
+    }
+
+    private _measureTextWidth(text: string, font: string): number{
         let temp = new BABYLON.DynamicTexture("TempDynamicTexture", {width:512, height:256}, this.scene, false);
         let tmpctx = temp.getContext();
         tmpctx.font = font;
@@ -153,7 +173,7 @@ export class SensorManager{
         return DTWidth;
     }
 
-    private _loadEntities(){
+    private _loadEntities(): void{
         
         const nodeBoxes = _nodeBoxes as NodeBox[];
         const auxBoxes = _auxBoxes as AuxBox[];

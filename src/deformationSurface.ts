@@ -57,7 +57,8 @@ export class DeformationSurface{
         const deckYoffset = 200;
         const deckZoffset = 90
 
-        var sideO = BABYLON.Mesh.BACKSIDE;
+        // var sideO = BABYLON.Mesh.BACKSIDE;
+        var sideO = BABYLON.Mesh.FRONTSIDE;
         this._pathArray = [];
         
         const cols = this._columns;
@@ -99,7 +100,7 @@ export class DeformationSurface{
         const heatmapWidth = this._rows;
 
         let textureData: number[] = [];
-        let yDeformation: number[][] = [];
+        let yDeformation: number[][] = Array(heatmapWidth).fill([]);
 
         const sensorManager = SensorManager.getInstance();
         const selectedGroup = (document.getElementById("heatmapDatasetSelect") as HTMLInputElement).value;
@@ -113,17 +114,16 @@ export class DeformationSurface{
             }
         });
 
-        const normalize = function(val: number, max: number, min: number): number { return (val - min) / (max - min); }
+        const normalize = function(min: number, max: number, val: number): number { return (val - min) / (max - min); }
 
-        for(let i = 0; i < heatmapWidth; i++){
-            yDeformation.push([]);
-        }
-
+        let c = 0;
         for(let i = 0; i < heatmapLength*heatmapWidth; i++){
             const datapoint = sensorsToShow.find(s => s.sector === i);
-            const value = datapoint !== undefined ? datapoint.value : 0;
-            console.debug(value);
-            yDeformation[i % heatmapWidth].push(normalize(100 - value, 0, 100));
+            // const value = datapoint !== undefined ? datapoint.value : 0;
+            const value = c;
+            c += 6;
+            // console.debug(value);
+            yDeformation[i % heatmapWidth].push(normalize(0, 100, 100 - value));
 
             try{
                 textureData.push(...convertValuesToHeatmap(0, 100, value));
@@ -132,16 +132,21 @@ export class DeformationSurface{
             }
         }
 
-        console.debug(yDeformation);
+        // console.debug(yDeformation);
 
         for(var p = 0; p < this._pathArray.length; p++) {
             for (var i = 0; i < this._pathArray[p].length; i++) {
+
+                // console.debug(p,i, yDeformation[p][i]);
+
+                // console.debug(yDeformation[p][i] * this.verticalDeformationScale);
+
                 var x = this._pathArray[p][i].x;
                 var z = this._pathArray[p][i].z;
                 // var y = 20 * Math.sin(i/ 10);
                 // var z = path[i].z + ((Math.random() / 10) - .01);
-                // var y = this._yLevel - (Math.random() * this.verticalDeformationScale);
-                var y = this._yLevel - (yDeformation[p][i] * this.verticalDeformationScale);
+                var y = this._yLevel - (Math.random() * this.verticalDeformationScale);
+                // var y = this._yLevel - (yDeformation[p][i] * this.verticalDeformationScale);
                 this._pathArray[p][i].x = x;
                 this._pathArray[p][i].y = y;
                 this._pathArray[p][i].z = z;
@@ -166,6 +171,7 @@ export class DeformationSurface{
         let deformationMaterial = new BABYLON.StandardMaterial("deformationMaterial", this.scene);
         // deformationMaterial.diffuseTexture = texture;
         deformationMaterial.emissiveTexture = texture;
+        deformationMaterial.disableLighting = true;
         deformationMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
         deformationMaterial.backFaceCulling = false;
         this._surfaceMesh.material = deformationMaterial;

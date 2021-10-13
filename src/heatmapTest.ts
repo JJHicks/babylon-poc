@@ -203,11 +203,13 @@ export class heatmapTest{
         // );
 
         let heatmapMaterial = new BABYLON.StandardMaterial("testHeatmap1Material", this.scene);
-        heatmapMaterial.diffuseTexture = texture;
+        // heatmapMaterial.diffuseTexture = texture;
+        heatmapMaterial.emissiveTexture = texture;
         heatmapMaterial.specularColor = new BABYLON.Color3(0, 0, 0);
 
         //let animation = new BABYLON.Animation("heatmapAnimation", "material.texture", 30, BABYLON.Animation.ANIMATIONTYPE_COLOR3, BABYLON.Animation.ANIMATIONLOOPMODE_CONSTANT);
 
+        heatmapMaterial.disableLighting = true;
         this._heatmapMesh1.material = heatmapMaterial;
         this._heatmapMesh2.material = heatmapMaterial;
     }

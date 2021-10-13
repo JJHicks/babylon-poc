@@ -26,13 +26,21 @@ export class Environment{
     public async load() {
         await this._loadAssets();
     }
+
+    public adjustBridgeAlpha(){
+        const alphaValue = parseFloat((document.getElementById("bridgeOpacity") as HTMLInputElement).value);
+        this._bridgeMeshes.forEach(mesh => {
+            mesh.visibility = alphaValue;
+        });
+        this._deckMesh.visibility = alphaValue;
+    }
     
     private async _loadAssets() {
         this._createSkyBox();
         this._createLights();
         await this._createTerrain();
         await this._createBridge();
-        this._createHeatmapPlane();        
+        this._createDeckPlane();        
     }
 
     private async _createBridge(){
@@ -49,9 +57,10 @@ export class Environment{
         });
 
         bridgeMaterial.freeze();
+        bridgeMaterial.backFaceCulling = true;
         bridgeImport.meshes[1].material = bridgeMaterial;
 
-        this._bridgeMeshes = bridgeImport.meshes;     
+        this._bridgeMeshes = bridgeImport.meshes;
 
         let bridgeMesh = bridgeImport.meshes[0] as BABYLON.Mesh;
         bridgeMesh.scaling.copyFromFloats(0.3, 0.3, 0.3);
@@ -79,7 +88,8 @@ export class Environment{
         sceneMesh.freezeWorldMatrix();
     }
     
-    private _createHeatmapPlane(){
+    private _createDeckPlane(){
+
         const bridgeMesh = this._bridgeMeshes[0];
         const deckSkew = 165;
         const deckWidth = 900;
@@ -101,6 +111,9 @@ export class Environment{
         this._deckMesh.renderingGroupId = 2;
         this._deckMesh.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(14), 0);
 
+        let deckMaterial = new BABYLON.StandardMaterial("baseDeckMaterial", this._scene);
+        deckMaterial.backFaceCulling = true;
+        this._deckMesh.material = deckMaterial;
         this._deckMesh.freezeWorldMatrix();
     }
 
