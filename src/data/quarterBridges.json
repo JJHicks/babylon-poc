@@ -10,8 +10,7 @@
         "channelQTY": 1,
         "auxBox": "AC350-1",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "A5_FB1500_SG_1",
@@ -24,8 +23,7 @@
         "channelQTY": 1,
         "auxBox": "CB4-7",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "FB05_G0102_SG_2",
@@ -38,8 +36,7 @@
         "channelQTY": 1,
         "auxBox": "AC350-4",
         "mappedTo": "Node Box 1",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "FB05_G0102_SG_2",
@@ -52,8 +49,7 @@
         "channelQTY": 1,
         "auxBox": "AC350-4",
         "mappedTo": "Node Box 1",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "FB05_G0304_SG_2",
@@ -66,8 +62,7 @@
         "channelQTY": 1,
         "auxBox": "AC350-6",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "FB08_G0304_SG_1",
@@ -80,8 +75,7 @@
         "channelQTY": 1,
         "auxBox": "AC350-8",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "FB08_G0304_SG_3",
@@ -94,8 +88,7 @@
         "channelQTY": 1,
         "auxBox": "CB4-8",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "FB08_G0102_SG_2",
@@ -108,8 +101,7 @@
         "channelQTY": 1,
         "auxBox": "AC350-3",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G04_FB0800_SG_1",
@@ -122,8 +114,7 @@
         "channelQTY": 1,
         "auxBox": "CB4-8",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "A10_FB1500_SG_1",
@@ -136,8 +127,7 @@
         "channelQTY": 1,
         "auxBox": "AC350-13",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "A6_FB0100_SG_1",
@@ -150,8 +140,7 @@
         "channelQTY": 1,
         "auxBox": "CB4-11",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "FB05_G0607_SG_2",
@@ -164,8 +153,7 @@
         "channelQTY": 1,
         "auxBox": "AC350-10",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "FB08_G0102_SG_2",
@@ -178,8 +166,7 @@
         "channelQTY": 1,
         "auxBox": "AC350-11",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G07_FB0100_SG_1",
@@ -192,8 +179,7 @@
         "channelQTY": 1,
         "auxBox": "CB4-9",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     },
     {
         "id": "G07_FB0100_SG_2",
@@ -206,7 +192,6 @@
         "channelQTY": 1,
         "auxBox": "CB4-10",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     }
 ]

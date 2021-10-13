@@ -10,7 +10,6 @@
         "channelQTY": 0,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 0
     }
 ]

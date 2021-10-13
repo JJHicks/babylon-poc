@@ -16,5 +16,6 @@ module.exports = {
                 use: ["source-map-loader"],
             },
         ],
-    }
+    },
+    stats: { warnings :false }
 };

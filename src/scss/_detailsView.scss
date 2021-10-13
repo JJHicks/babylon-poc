@@ -1,0 +1,47 @@
+#detailsSidebarToggle{
+    font-size: 2rem;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    right: 30px;
+    color: #fff;
+}
+
+#detailsSidebar{
+    width: 500px;
+    overflow-y: auto;
+    height: 100vh;
+    position: relative;
+    z-index: 10;
+
+    .accordion-body{
+        padding: 0;
+    }
+}
+
+#graphContainer{
+    background-color: #E8E8E8;
+    height: 350px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+
+    .area {
+        fill: steelblue;
+        clip-path: url(#clip);
+    }
+      
+    .zoom {
+        cursor: move;
+        fill: none;
+        pointer-events: all;
+    }
+
+    #detailViewChartIdDisplay{
+        font-size: 1.2rem;
+        font-weight: bold;
+        padding: 0 10px;
+    }
+}
+

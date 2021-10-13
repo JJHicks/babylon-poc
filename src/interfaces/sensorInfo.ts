@@ -8,7 +8,7 @@ export interface SensorInfo {
     textureOrder: number
 }
 
-interface SensorPosition {
+export interface SensorPosition {
     x: number,
     y: number,
     z: number

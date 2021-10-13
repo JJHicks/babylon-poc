@@ -10,8 +10,7 @@
         "channelQTY": 2,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 1
     },
     {
         "id": "A3_HC0800_F_1",
@@ -24,8 +23,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 2
     },
     {
         "id": "A4_FB1100_A_1",
@@ -38,8 +36,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 3
     },
     {
         "id": "G01_FB0800_A_1",
@@ -52,8 +49,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 4
     },
     {
         "id": "G01_FB1100_A_1",
@@ -66,8 +62,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Datalogger",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 5
     },
     {
         "id": "A2_FB0500_A_1",
@@ -80,22 +75,20 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 1",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 6
     },
     {
         "id": "G01_FB0500_A_1",
         "position": {
-            "x": 0,
-            "y": 0,
-            "z": 0
+            "x": -240.75612665072236,
+            "y": -139.8475096277138,
+            "z": -75.02312526364912
         },
         "QTYTakeOff": 3,
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 1",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 7
     },
     {
         "id": "G04_FB0500_A_1",
@@ -108,8 +101,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 8
     },
     {
         "id": "G04_FB0800_A_1",
@@ -122,8 +114,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 9
     },
     {
         "id": "G04_FB1100_A_1",
@@ -136,8 +127,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 2",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 10
     },
     {
         "id": "A7_FB0500_A_1",
@@ -150,8 +140,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 11
     },
     {
         "id": "A8_FB0800_A_1/2",
@@ -164,8 +153,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 12
     },
     {
         "id": "A8_HC0800_F_1",
@@ -178,8 +166,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 13
     },
     {
         "id": "A9_FB1100_A_1",
@@ -192,8 +179,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 14
     },
     {
         "id": "G07_FB1100_A_1",
@@ -206,8 +192,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 15
     },
     {
         "id": "G07_FB0500_A_1",
@@ -220,8 +205,7 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 16
     },
     {
         "id": "G07_FB0800_A_1",
@@ -234,7 +218,6 @@
         "channelQTY": 1,
         "auxBox": "N/A",
         "mappedTo": "Node Box 3",
-        "data" : [],
-        "textureOrder": 0
+        "heatmapSector": 17
     }
 ]

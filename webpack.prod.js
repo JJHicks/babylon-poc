@@ -10,13 +10,13 @@ const appDirectory = fs.realpathSync(process.cwd());
 
 module.exports = merge(common, {
     entry: {
-        index: path.resolve(appDirectory, "app.ts")
+        // index: path.resolve(appDirectory, "app.ts")
+        
+        index: [path.resolve(appDirectory, "app.ts"), path.resolve(appDirectory, "scss/style.scss")]
     },
     output: {
-        //path: path.resolve(appDirectory, "../build"),
         path: path.resolve(appDirectory, "../share/nginx/html"),
         filename: "js/bundle.js", 
-        // publicPath: "/"
     },
     mode: "production",
     devtool: false,
@@ -26,17 +26,6 @@ module.exports = merge(common, {
                 test: /\.css$/,
                 type: "asset/source",
                 use: [MiniCssExtractPlugin.loader, "css-loader"]
-                // use: [ 
-                //     {
-                //         loader: MiniCssExtractPlugin.loader,
-                //         options: {
-                //             publicPath: (resourcePath, context) => {
-                //                 return path.relative(path.dirname(resourcePath), context) + "/build"
-                //             }
-                //         }
-                //     }, 
-                //     "css-loader"
-                // ]
             },
             {
                 test: /\.tsx?$/,
@@ -51,9 +40,19 @@ module.exports = merge(common, {
                 ]
             },
             {
-                test: /\.(sa|sc|c)ss$/,
+                test: /\.scss$/,
                 exclude: /node_modules/,
-                use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
+                use: [
+                    MiniCssExtractPlugin.loader,
+                    {
+                        loader: "css-loader",
+                        options: {
+                            // minimize: true,
+                            sourceMap: true
+                        }
+                    },
+                    "sass-loader"
+                ]
             }
         ]
     },
