@@ -63,12 +63,13 @@ footer.ui-overlay{
     position: absolute;
     bottom: 0;
     background-color: transparent;
-    padding: 3rem 10rem;
+    padding: 3rem;
     color: #fff;
 }
 
 #playbackControlContainer{
-    width: 100%;
+    max-width: 900px;
+    margin: auto;
     display: flex;
     align-items: center;
     input{
@@ -90,3 +91,17 @@ footer.ui-overlay{
     margin: 10px 0 0 20px;
 }
 
+.form-control[readonly].flatpickr-input {
+    background-color: #fff;
+}
+
+.flatpickr-day{
+    &.selected,
+    &.today{
+        border-color: $primary;
+    }
+    
+    &.selected{
+        background: $primary;
+    }
+}

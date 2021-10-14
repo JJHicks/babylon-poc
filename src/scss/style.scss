@@ -3,8 +3,9 @@ $fa-font-path: '~@fortawesome/fontawesome-free/webfonts';
 @import '~@fortawesome/fontawesome-free/scss/solid';
 @import '~@fortawesome/fontawesome-free/scss/regular';
 
+$primary: #9e1b32;
+
 @import "~bootstrap/scss/bootstrap";
-@import "~bootstrap-icons/font/bootstrap-icons.css";
 @import "~flatpickr/dist/flatpickr";
 
 @import 'variables';

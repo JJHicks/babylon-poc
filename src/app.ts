@@ -176,8 +176,8 @@ class App {
             if((e.target as HTMLElement).id !== "detailsSidebar")
                 return;
             const icon = document.getElementById("detailsSidebarToggleIcon") as HTMLElement;
-            icon.classList.remove("bi-arrow-left-circle");
-            icon.classList.add("bi-arrow-right-circle");
+            icon.classList.remove("fa-arrow-alt-circle-left");
+            icon.classList.add("fa-arrow-alt-circle-right");
             this._resizeCanvas();
         });
 
@@ -185,8 +185,8 @@ class App {
             if((e.target as HTMLElement).id !== "detailsSidebar")
                 return;
             const icon = document.getElementById("detailsSidebarToggleIcon") as HTMLElement;
-            icon.classList.remove("bi-arrow-right-circle");
-            icon.classList.add("bi-arrow-left-circle");
+            icon.classList.remove("fa-arrow-alt-circle-right");
+            icon.classList.add("fa-arrow-alt-circle-left");
             this._resizeCanvas();
             this._sensorManager.clearSensorHighlights();
         });

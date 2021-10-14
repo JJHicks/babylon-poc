@@ -56,6 +56,7 @@ export class TimeGraph {
         this._setDomains();
 
         this._context.select(".axis--x").call(this._xAxisC as any);
+        this._context.select(".area").attr("d", this._areaC);
         this._focus.select(".axis--y").call(this._yAxisF as any);
         this._brushed(null);
     }
@@ -74,9 +75,6 @@ export class TimeGraph {
             }
             this._data.push(point);
         };
-
-        
-        console.debug(d3.extent(this._data, d => d.value));
 
         this._svg = d3.select("svg");
         this._svg.attr("width", this._width);

@@ -11,7 +11,6 @@ const appDirectory = fs.realpathSync(process.cwd());
 module.exports = merge(common, {
     entry: {
         // index: path.resolve(appDirectory, "app.ts")
-        
         index: [path.resolve(appDirectory, "app.ts"), path.resolve(appDirectory, "scss/style.scss")]
     },
     output: {
@@ -40,7 +39,7 @@ module.exports = merge(common, {
                 ]
             },
             {
-                test: /\.scss$/,
+                test: /\.s?css$/,
                 exclude: /node_modules/,
                 use: [
                     MiniCssExtractPlugin.loader,
