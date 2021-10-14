@@ -39,7 +39,7 @@ module.exports = merge(common, {
                 ]
             },
             {
-                test: /\.scss$/,
+                test: /\.s?css$/,
                 exclude: /node_modules/,
                 use: [
                     MiniCssExtractPlugin.loader,
