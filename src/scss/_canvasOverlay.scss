@@ -63,12 +63,13 @@ footer.ui-overlay{
     position: absolute;
     bottom: 0;
     background-color: transparent;
-    padding: 3rem 10rem;
+    padding: 3rem;
     color: #fff;
 }
 
 #playbackControlContainer{
-    width: 100%;
+    max-width: 900px;
+    margin: auto;
     display: flex;
     align-items: center;
     input{
