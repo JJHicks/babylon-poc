@@ -13,11 +13,12 @@ export class DeformationSurface{
     private _yLevel: number;
     private _rows: number;
     private _columns: number;
+    private _scene: BABYLON.Scene;
 
-    public scene: BABYLON.Scene;
     public verticalDeformationScale: number;
 
-    constructor(rows: number, cols: number){
+    constructor(scene: BABYLON.Scene, rows: number, cols: number){
+        this._scene = scene;
         this._rows = rows;
         this._columns = cols;
         this.verticalDeformationScale = 30;
@@ -26,32 +27,52 @@ export class DeformationSurface{
 
     private _createSurfacePlane(){
 
-        const position = {
-            x: -80,
-            y: -50,
-            z: 105
-        }
+        // const position = {
+        //     x: -80,
+        //     y: -50,
+        //     z: 105
+        // }
 
-        // const deckSkew = 165;
-        // const deckWidth = 900;
-        // const deckHeight = 450; 
-
-        // const polyCorners = [
-        //     new BABYLON.Vector2(0 + deckSkew, 0),
-        //     new BABYLON.Vector2(deckWidth + deckSkew, 0),
-        //     new BABYLON.Vector2(deckWidth, deckHeight),
-        //     new BABYLON.Vector2(0, deckHeight)
-        // ];
-
-        // const deckXoffset = 570;
-        // const deckYoffset = 73;
+        // const deckXoffset = -350;
+        // const deckYoffset = 200;
         // const deckZoffset = 90
 
-        // const deck = new BABYLON.PolygonMeshBuilder("deformationSurfacePoly", polyCorners, this.scene, window.earcut.default);
-        // this._surfaceMesh = deck.build();
-        // this._surfaceMesh.position = new BABYLON.Vector3(position.x - deckXoffset, position.y - deckYoffset, position.z - deckZoffset);
-        // this._surfaceMesh.renderingGroupId = 2;           
+        // // var sideO = BABYLON.Mesh.BACKSIDE;
+        // var sideO = BABYLON.Mesh.FRONTSIDE;
+        // this._pathArray = [];
+        
+        // const cols = this._columns;
+        // const colSpacing = 200;
+        // const rows = this._rows;
+        // const rowSpacing = 150;
+
+        // this._yLevel = position.y + deckYoffset;
+
+        // for(var i = 0; i < rows; i++) {
+        //     this._pathArray.push([]);
+        //     for (var j = 0; j < cols; j++) {
+        //         var x = i * rowSpacing;
+        //         var y = this._yLevel;
+        //         var z = j * colSpacing;
+        //         this._pathArray[i].push(new BABYLON.Vector3(x, y, z));
+        //     }
+        // }
+
+        // const pathLines = BABYLON.MeshBuilder.CreateLineSystem("deformationPaths", {lines: this._pathArray}, this._scene);
+        // pathLines.color = BABYLON.Color3.Green();
+
+        // pathLines.position = new BABYLON.Vector3(position.x + deckXoffset, this._yLevel, position.z + deckZoffset);        
+        // pathLines.renderingGroupId = 2;        
+
+        // pathLines.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(14), 0);
+
+        // this._surfaceMesh = BABYLON.Mesh.CreateRibbon("ribbon", this._pathArray, false, false, 0, this._scene, true, sideO);
+        // this._surfaceMesh.position = new BABYLON.Vector3(position.x + deckXoffset, this._yLevel, position.z + deckZoffset);
+        // this._surfaceMesh.renderingGroupId = 2;        
         // this._surfaceMesh.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(14), 0);
+
+        // =================================================================================================================
+   
 
         const deckXoffset = -350;
         const deckYoffset = 200;
@@ -62,11 +83,13 @@ export class DeformationSurface{
         this._pathArray = [];
         
         const cols = this._columns;
-        const colSpacing = 200;
+        const colSpacing = 500;
         const rows = this._rows;
         const rowSpacing = 150;
 
-        this._yLevel = position.y + deckYoffset;
+        const skewOffset = 100;
+
+        this._yLevel = deckYoffset;
 
         for(var i = 0; i < rows; i++) {
             this._pathArray.push([]);
@@ -74,22 +97,31 @@ export class DeformationSurface{
                 var x = i * rowSpacing;
                 var y = this._yLevel;
                 var z = j * colSpacing;
-                this._pathArray[i].push(new BABYLON.Vector3(x, y, z));
+                this._pathArray[i].push(new BABYLON.Vector3(x + (skewOffset * i), y, z));
             }
         }
 
-        const pathLines = BABYLON.MeshBuilder.CreateLineSystem("deformationPaths", {lines: this._pathArray}, this.scene);
+        const pathLines = BABYLON.MeshBuilder.CreateLineSystem("deformationPaths", {lines: this._pathArray}, this._scene);
         pathLines.color = BABYLON.Color3.Green();
-        pathLines.position = new BABYLON.Vector3(position.x + deckXoffset, this._yLevel, position.z + deckZoffset);        
+
+        // pathLines.position = new BABYLON.Vector3(position.x + deckXoffset, this._yLevel, position.z + deckZoffset);        
         pathLines.renderingGroupId = 2;        
-        pathLines.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(14), 0);
 
-        console.debug(this._pathArray);
+        pathLines.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(100), 0);
 
-        this._surfaceMesh = BABYLON.Mesh.CreateRibbon("ribbon", this._pathArray, false, false, 0, this.scene, true, sideO);
-        this._surfaceMesh.position = new BABYLON.Vector3(position.x + deckXoffset, this._yLevel, position.z + deckZoffset);
+        this._surfaceMesh = BABYLON.Mesh.CreateRibbon("ribbon", this._pathArray, false, false, 0, this._scene, true, sideO);
+
+        
+        const bridgeMesh = this._scene.getMeshByName("bridge");
+        bridgeMesh.showBoundingBox = true;
+        bridgeMesh.showSubMeshesBoundingBox = true;
+        this._surfaceMesh.parent = bridgeMesh;
+
+        pathLines.parent = bridgeMesh;
+
+        // this._surfaceMesh.position = new BABYLON.Vector3(position.x + deckXoffset, this._yLevel, position.z + deckZoffset);
         this._surfaceMesh.renderingGroupId = 2;        
-        this._surfaceMesh.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(14), 0);
+        this._surfaceMesh.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(100), 0);
 
         this.updateSurface();
     }
@@ -132,8 +164,6 @@ export class DeformationSurface{
             }
         }
 
-        // console.debug(yDeformation);
-
         for(var p = 0; p < this._pathArray.length; p++) {
             for (var i = 0; i < this._pathArray[p].length; i++) {
 
@@ -162,13 +192,13 @@ export class DeformationSurface{
             heatmapLength,
             heatmapWidth,
             BABYLON.Engine.TEXTUREFORMAT_RGB,
-            this.scene,
+            this._scene,
             false,
             false,
             BABYLON.Texture.TRILINEAR_SAMPLINGMODE
         );
 
-        let deformationMaterial = new BABYLON.StandardMaterial("deformationMaterial", this.scene);
+        let deformationMaterial = new BABYLON.StandardMaterial("deformationMaterial", this._scene);
         // deformationMaterial.diffuseTexture = texture;
         deformationMaterial.emissiveTexture = texture;
         deformationMaterial.disableLighting = true;

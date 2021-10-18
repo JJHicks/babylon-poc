@@ -40,6 +40,7 @@ export class Environment{
         this._createLights();
         await this._createTerrain();
         await this._createBridge();
+        // this._bridgeMeshes[0].id = "bridge";
         this._createDeckPlane();        
     }
 
@@ -67,6 +68,7 @@ export class Environment{
         
         bridgeMesh.rotation = new BABYLON.Vector3(0, BABYLON.Tools.ToRadians(83.8), 0);
         bridgeMesh.position = new BABYLON.Vector3(-80, -50, 105);
+        bridgeMesh.name = "bridge"
     }
 
     private async _createTerrain(){
@@ -86,6 +88,7 @@ export class Environment{
         sceneMaterial.freeze();
         sceneMesh.material = sceneMaterial;
         sceneMesh.freezeWorldMatrix();
+        sceneMesh.name = "scene";
     }
     
     private _createDeckPlane(){
