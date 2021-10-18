@@ -2,49 +2,32 @@
     height: inherit;
 }
 
-header.ui-overlay{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: start;
-    position: absolute;
-    background-color: transparent;
-    padding: .5rem;
-    color: #fff;
-
-    > *{
+.overlay-header{
+    &.ui-overlay{
         width: 100%;
         display: flex;
-    }
-
-    .form-group, .form-check{
-        margin-left: 20px;
+        align-items: center;
+        justify-content: start;
+        position: absolute;
+        background-color: transparent;
+        padding: .5rem;
+        color: #fff;
+    
+        > *{
+            width: 100%;
+            display: flex;
+        }
+    
+        .form-group, .form-check{
+            margin-left: 20px;
+        }
     }
 }
 
-#sensorDataDisplayContainer{
-    color: #000;
-    margin-left: auto;
-    background-color: #e8e8e8;
-    border: 3px solid #fff;
-    border-radius: 4px;
-    opacity: .8;
-    min-width: 300px;
-    padding: .5rem 2rem;
-    max-height: 300px;
-    overflow-y: scroll;
-
-    .sensorDataRow{
-        display: flex;
-
-        .sensorDataName{
-            flex: 50% 0 0;
-        }
-        .sensorDataValue{
-            flex: 50% 0 0;
-            //text-align: right;
-        }
-    }
+#detailsSidebarToggle{
+    font-size: 2rem;
+    color: #fff;
+    margin-right: 15px;
 }
 
 .slider-container{
@@ -58,13 +41,25 @@ header.ui-overlay{
     touch-action: none;
 }
 
-footer.ui-overlay{
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    background-color: transparent;
-    padding: 3rem;
-    color: #fff;
+.overlay-footer{
+
+    &.ui-overlay{
+        width: 100%;
+        position: absolute;
+        bottom: 0;
+        background-color: transparent;
+        padding: 1rem 3rem;
+        color: #fff;
+    }
+
+    .logo-container{
+        text-align: center;
+
+        img{
+            height: 30px;
+            width: auto;
+        }
+    }
 }
 
 #playbackControlContainer{

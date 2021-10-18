@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/JJHicks/babylon-poc#readme",
   "dependencies": {
+    "@azure/msal-browser": "^2.18.0",
     "@fortawesome/fontawesome-free": "^5.15.4",
     "@types/d3": "^7.0.0",
     "@types/lodash": "^4.14.175",

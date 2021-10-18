@@ -25,9 +25,11 @@ import { HeatmapManager } from "./heatmapManager";
 import { DeformationSurface } from "./deformationSurface";
 import { heatmapTest } from "./heatmapTest";
 import { DetailsViewManager } from "./detailViewManager";
+import { AuthManager } from "./authManager";
 
 class App {
 
+    private _authManager: AuthManager;
     private _scene: BABYLON.Scene;
     private _universalCamera: BABYLON.UniversalCamera;
     private _canvas: HTMLCanvasElement;
@@ -43,10 +45,23 @@ class App {
     private _heatmapManager: HeatmapManager;
     private _deformationSurface: DeformationSurface;
 
-    // Heatmap tests
     private _heatmapTest: heatmapTest;
 
+    public username?: string;
+
     constructor() {
+        this._authManager = AuthManager.getInstance();
+        this._checkLoggedIn();
+    }
+
+    private async _checkLoggedIn(){
+        this._authManager.logIn().then(async account => {
+            if(account)
+                await this._init();
+        });
+    }
+
+    private async _init(){
 
         BABYLON.RenderingManager.MAX_RENDERINGGROUPS = 8;
 
@@ -76,7 +91,7 @@ class App {
 
         // hide/show the Inspector, i
         window.addEventListener("keydown", (ev) => {
-            if (ev.keyCode === 73) {
+            if (ev.shiftKey && ev.keyCode === 73) {
                 if (this._scene.debugLayer.isVisible()) {
                     this._scene.debugLayer.hide();
                 } else {
@@ -110,11 +125,6 @@ class App {
         await this._environment.load();
     
         this._bindEvents();
-        // Babylon GUI
-        this._initInfoDisplay();
-
-        // HTML Overlay
-        // this._initSensorDataDisplay();
 
         this._sensorManager = SensorManager.getInstance();
         this._sensorManager.scene = this._scene;
@@ -125,7 +135,7 @@ class App {
         this._generateFalseSensorData();
 
         // Surface deformation test
-        this._deformationSurface = new DeformationSurface(5, 3);
+        this._deformationSurface = new DeformationSurface(this._scene, 5, 3);
 
         this._heatmapTest = new heatmapTest();
 
@@ -148,7 +158,6 @@ class App {
 
         document.getElementById("sensorsInFront").addEventListener("change", e => this._sensorManager.setAllSensorsVisible((e.target as HTMLInputElement).checked));
         document.getElementById("showHeatmap").addEventListener("change", e => this._heatmapManager.adjustDeckHeatmapAlpha());
-        // document.getElementById("showSensorData").addEventListener("change", e => this._toggleShowSensorData());
         document.getElementById("heatmapOpacity").addEventListener("input", e => this._heatmapManager.adjustDeckHeatmapAlpha());
         document.getElementById("playbackIcon").addEventListener("click", e => this._togglePlayback());
         document.getElementById("heatmapDatasetSelect").addEventListener("change", e => this._heatmapManager.updateHeatmap());
@@ -175,18 +184,12 @@ class App {
         document.getElementById("detailsSidebar").addEventListener("shown.bs.collapse", (e) => {
             if((e.target as HTMLElement).id !== "detailsSidebar")
                 return;
-            const icon = document.getElementById("detailsSidebarToggleIcon") as HTMLElement;
-            icon.classList.remove("fa-arrow-alt-circle-left");
-            icon.classList.add("fa-arrow-alt-circle-right");
             this._resizeCanvas();
         });
 
         document.getElementById("detailsSidebar").addEventListener("hidden.bs.collapse", (e) => {
             if((e.target as HTMLElement).id !== "detailsSidebar")
                 return;
-            const icon = document.getElementById("detailsSidebarToggleIcon") as HTMLElement;
-            icon.classList.remove("fa-arrow-alt-circle-right");
-            icon.classList.add("fa-arrow-alt-circle-left");
             this._resizeCanvas();
             this._sensorManager.clearSensorHighlights();
         });
@@ -225,6 +228,12 @@ class App {
                 }                
             }
         }
+
+        document.querySelectorAll(".logout-button").forEach(el => {
+            el.addEventListener("click", e => {
+                this._authManager.logOut();
+            });
+        });
     }
 
     private _resizeCanvas(){
@@ -265,8 +274,6 @@ class App {
         const startDate = (document.getElementById("startDate") as HTMLInputElement).value;
         const endDate = (document.getElementById("endDate") as HTMLInputElement).value;
         CSVHelper.exportCSVFile(headers, data, `${startDate}-${endDate}_${sensorGroups.join("_")}_export`);
-
-        // (bootstrap as any).Modal.getInstance(document.getElementById("exportSelectionModal")).hide();
     }   
     
     private _handleTimeChange(){
@@ -282,47 +289,6 @@ class App {
         this._heatmapTest.updateHeatmaps();
         this._deformationSurface.updateSurface();
     }
-
-    // private _initSensorDataDisplay(){
-    //     const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLElement;
-
-    //     let rows = displayContainer.getElementsByClassName(".sensorRowData");
-    //     while(rows[0]) rows[0].parentNode.removeChild(rows[0]);
-
-    //     const template = document.getElementById("sensorDataDisplayRowTemplate") as HTMLTemplateElement;
-    //     window.store.sensors.forEach((sensor: SensorInfo) => {
-
-    //         let row = template.content.cloneNode(true) as HTMLElement;
-    //         const nameSection = row.querySelector(".sensorDataName") as HTMLElement;
-    //         const valueSection = row.querySelector(".sensorDataValue") as HTMLElement;
-            
-    //         nameSection.textContent = sensor.name;
-    //         valueSection.dataset.id = sensor.id;
-
-    //         displayContainer.appendChild(row);
-    //     });
-
-    //     this._updateSensorDataDisplay();
-    // }
-
-    // private _updateSensorDataDisplay(){
-    //     const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLInputElement;
-    //     const timeSliderValue = (document.getElementById("timeSelect") as HTMLInputElement).value;
-    //     const time = window.store.timesShown[timeSliderValue];
-    //     const dateTimeSelected = DateTime.fromISO(time);
-
-    //     window.store.sensors.forEach((sensor: SensorInfo) => {
-    //         const timeData = sensor.data.find((d: SensorData) => d.datetime.equals(dateTimeSelected));
-    //         const field = displayContainer.querySelector(`.sensorDataValue[data-id="${sensor.id}"]`);
-    //         if(field === null) return;
-    //         field.textContent = timeData !== undefined ? timeData.value.toFixed(5).toString() : "- No Value";
-    //     });
-    // }
-
-    // private _toggleShowSensorData(){
-    //     const displayContainer = document.getElementById("sensorDataDisplayContainer") as HTMLInputElement;
-    //     displayContainer.hidden = !(document.getElementById("showSensorData") as HTMLInputElement).checked;
-    // }
 
     private _togglePlayback(){
         const icon = document.getElementById("playbackIcon") as HTMLElement;
@@ -394,18 +360,6 @@ class App {
         this._universalCamera.keysUpward = [69]; // E
         this._universalCamera.speed = 10;
         this._universalCamera.attachControl(this._canvas)
-    }
-
-    private _initInfoDisplay(){
-        this._infoDisplayTexture = GUI.AdvancedDynamicTexture.CreateFullscreenUI("UI", true, this._scene);
-        this._infoDisplayTextBlock = new GUI.TextBlock();
-        this._infoDisplayTextBlock.fontSize = 24;
-        this._infoDisplayTextBlock.paddingTop = "20px";
-        this._infoDisplayTextBlock.paddingRight = "20px";
-        this._infoDisplayTextBlock.textHorizontalAlignment = GUI.Control.HORIZONTAL_ALIGNMENT_RIGHT;
-        this._infoDisplayTextBlock.textVerticalAlignment = GUI.Control.VERTICAL_ALIGNMENT_TOP;
-        this._infoDisplayTextBlock.color = "white";
-        this._infoDisplayTexture.addControl(this._infoDisplayTextBlock);
     }
 }
 

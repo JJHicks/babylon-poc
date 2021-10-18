@@ -8,13 +8,21 @@
     <meta name="google" content="notranslate">
     <meta http-equiv="Content-Language" content="en">
     <title>McFarland Bridge</title>
+
+    <link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+    <link rel="manifest" href="/img/favicon/site.webmanifest">
+    <link rel="mask-icon" href="/img/favicon/safari-pinned-tab.svg" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
 </head>
 
 <body>
     <div class="container-fluid">
         <div class="row flex-nowrap">
             <main class="col -100 m-0 p-0">
-                <header class="pe-none ui-overlay hide-before-load" hidden>
+                <header class="pe-none ui-overlay hide-before-load overlay-header" hidden>
                     <div>
                         <div>
                             <div class="form-group">
@@ -107,13 +115,24 @@
                                 <label for="" class="form-check-label">Weather Sensor Labels</label>
                             </div>
                         </div>
+                        <div class="ms-auto">
+                            <div class="d-flex align-items-center justify-content-end">
+                                <div class="text-end me-4">
+                                    <div class="logged-in-username"></div>
+                                    <button class="logout-button btn btn-primary pe-auto mt-2" type="button">
+                                        Logout
+                                    </button>
+                                </div>
+                                <a href="#" id="detailsSidebarToggle" data-bs-target="#detailsSidebar" data-bs-toggle="collapse"
+                                    class="pe-auto text-decoration-none"><i id="detailsSidebarToggleIcon" class="fas fa-bars"></i></a>
+                            </div>
+                        </div>
                     </div>
                 </header>
-                <section id="canvasContainer"></section>
-                <footer class="pe-none ui-overlay hide-before-load" hidden>
+                <div id="canvasContainer"></div>
+                <footer class="pe-none ui-overlay hide-before-load overlay-footer" hidden>
                     <div class="text-center mb-10">
-                        <h3 id="timeDisplay">
-                            </h5>
+                        <h3 id="timeDisplay"></h3>
                     </div>
                     <div id="playbackControlContainer" class="pe-auto">
                         <div id="playbackIconContainer">
@@ -121,9 +140,10 @@
                         </div>
                         <input type="range" class="form-range" min="0" max="1" step="1" id="timeSelect">
                     </div>
+                    <div class="logo-container">
+                        <img src="/img/VISITlab_horiz_white.png" alt="VISITlab logo">
+                    </div>
                 </footer>
-                <a href="#" id="detailsSidebarToggle" data-bs-target="#detailsSidebar" data-bs-toggle="collapse"
-                    class="pe-auto text-decoration-none"><i id="detailsSidebarToggleIcon" class="far fa-arrow-alt-circle-left"></i></a>
             </main>
             <div class="col-auto px-0 hide-before-load" hidden>
                 <div id="detailsSidebar" class="collapse collapse-horizontal border-end">
