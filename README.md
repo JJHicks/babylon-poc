@@ -5,6 +5,7 @@
   - [Running the project](#running-the-project)
   - [Deploying the project](#deploying-the-project)
 - [Current State](#current-state)
+  - [TODO/Possible Future Improvements](#todopossible-future-improvements)
 - [Libraries](#libraries)
 - [Architecture](#architecture)
   - [Auth](#auth)
@@ -43,7 +44,12 @@ Opening the side panel shows a list of markers that are selectible both in the m
 
 There is also a slider with automatic playback to show a historical view of sensor data between selected start and end dates.
 
+## TODO/Possible Future Improvements
 
+  - Place sensors in actual positions when known
+  - Get heatmap working with new sensor positions
+  - Dyanmic surface (to show exaggerated sensor motion)
+  
 # Libraries
 
 - msal-browser for auth
