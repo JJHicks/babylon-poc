@@ -12,6 +12,7 @@
     - [Credentials](#credentials)
 - [Known Issues](#known-issues)
 - [Extensibility](#extensibility)
+- [Screenshots](#screenshots)
 
 # Overview
 
@@ -89,4 +90,12 @@ None as the project is still in a phase of testing and prototyping.
 Static objects can be added to the scene and loaded from `environment.ts`
 
 If the object is more complex and dynamic, I recommend making a separate class for it and adding it into the scene in the `_buildEnvironment` method of `app.ts`
+
+# Screensots
+
+![mcfarland-bridge-main](https://user-images.githubusercontent.com/44045687/186302983-cbeeeb4d-274b-485e-8cee-48bd7f67bb90.png)
+
+![mcfarland-bridge-graph](https://user-images.githubusercontent.com/44045687/186303786-3c97de70-e533-4cb8-8f90-9bd9d9ddecd0.png)
+
+
 
